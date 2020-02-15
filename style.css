@@ -1,0 +1,81 @@
+@font-face {
+    font-family: 'vcr_osd_monoregular';
+    src: url('vcr_osd_mono_1.001-webfont.woff2') format('woff2'),
+         url('vcr_osd_mono_1.001-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+html {
+	font:3em "vcr_osd_monoregular";
+}
+body {
+	background:black;
+	color:white;
+	text-align:center;
+}
+#container {
+	margin:auto;
+}
+#input {
+	font:1rem "vcr_osd_monoregular";
+	padding:0.2em;
+}
+#input:focus,a:focus {
+	outline:3px solid magenta;
+}
+a,a:visited {
+	color:cyan;
+}
+
+
+/* SLIDER */
+	#slider {
+		width: 10em;
+		height: 0.2em;
+		margin: 1em auto;
+		background:magenta;
+	}
+
+	#custom-handle {
+		width: 0.2em;
+		height: 1em;
+		background: white;
+		top: -.4em;
+		margin-left: -.1em;
+	}
+	#custom-handle:focus {
+		outline:3px solid cyan;
+	}
+
+	#slider .ui-slider-range {
+		background: cyan;
+	}
+
+
+	.ui-corner-all {
+		border: none !important;
+		border-radius: 0 !important;
+	}
+
+	.ui-slider-horizontal .ui-slider-handle {
+	}
+
+	img.playpause {
+		width: 2em;
+		height: 2em;
+		image-rendering: pixelated;
+		position: absolute;
+		left: 0;
+		top: 0;
+	}
+
+	#control {
+		width: 2em;
+		height: 2em;
+		position: relative;
+		margin: auto;
+	}
+	#playercontrols canvas {
+		width:10em;
+	}
