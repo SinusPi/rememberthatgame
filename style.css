@@ -7,15 +7,28 @@
 
 }
 html {
-	font:3em "vcr_osd_monoregular";
+	font:2.5em "vcr_osd_monoregular";
 }
 body {
 	background:black;
 	color:white;
 	text-align:center;
+	margin:0;
 }
 #container {
 	margin:auto;
+}
+h2#title {
+	background:url(img/cmw-c0m2w0.gif);
+	border-bottom:2px solid magenta;
+	padding:10px 0px 14px 0px;
+	text-shadow: 4px 4px black;
+	position:relative;
+}
+#prefbut {
+	position:absolute; right:10px; top:0px;
+	color:cyan; font-size:0.8em;
+	cursor:pointer;
 }
 #input {
 	font:1rem "vcr_osd_monoregular";
@@ -28,6 +41,22 @@ a,a:visited {
 	color:cyan;
 }
 
+#qnum {
+	display:block;
+	font-size:0.8em;
+	margin-top:1em;
+	margin-bottom:0.6em;
+	color:magenta;
+}
+#qstats {
+	display:block;
+	font-size:0.6em;
+	margin-bottom:0.6em;
+}
+
+h2.title {
+	margin-bottom:0.3em;
+}
 
 /* SLIDER */
 	#slider {
@@ -50,6 +79,8 @@ a,a:visited {
 
 	#slider .ui-slider-range {
 		background: cyan;
+		height:0.7em;
+		top: -0.2em;
 	}
 
 
@@ -61,6 +92,10 @@ a,a:visited {
 	.ui-slider-horizontal .ui-slider-handle {
 	}
 
+	img {
+		image-rendering: pixelated;
+	}
+	
 	img.playpause {
 		width: 2em;
 		height: 2em;
@@ -78,4 +113,65 @@ a,a:visited {
 	}
 	#playercontrols canvas {
 		width:10em;
+		height:2em;
+		margin-top:0.1em;
 	}
+
+#questions {
+	margin-top:0.5em;
+	text-align:left;
+	width:15em;
+	margin:auto;
+}
+#questions .question img {
+	width:64px;
+	height:64px;
+	position:relative;
+	top:0.3em;
+}
+
+#intro {
+	font-size:0.7em;
+	width:15em;
+	margin:auto;
+}
+
+#prefform {
+	display:none;
+	border-bottom:2px solid white;
+	padding-bottom:8px;
+	margin-bottom:8px;
+	bottom:0px;
+}
+#prefform table {
+	width:10em;
+	margin:auto;
+	font-size:0.6em;
+}
+input.cga-checkbox {
+	opacity:0;width:1px;height:1px;
+}
+.cga-checkbox-wrap {
+	width:32px;
+	height:32px;
+	padding:0;
+}
+.cga-checkbox-wrap img {
+	width:32px;
+	height:32px;
+}
+
+a.cyanbut {
+	border:2px solid cyan;
+	background: url(img/cmw-c4m0w0.gif);
+	text-decoration: none;
+	text-shadow:2px 2px black;
+	color:white;
+	padding:2px;
+	text-transform:uppercase;
+	font-size:0.8em;
+}
+
+#commentsbox {
+	display:none;
+}
