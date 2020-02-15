@@ -1,0 +1,3 @@
++name=gem.?x=Gem'X
+pf=Amiga,ST,C64
+year=1991

@@ -1,0 +1,4 @@
++name=kq|king.*quest=King's Quest
++fullname=(kq|king.*quest) *(5|v)=King's Quest V
++title=willow=Weeping Willow
+pf=PC

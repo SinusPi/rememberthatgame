@@ -1,0 +1,3 @@
++name=fire.*ice=Fire and Ice
++title=Pianodemonium
+pf=Amiga,PC

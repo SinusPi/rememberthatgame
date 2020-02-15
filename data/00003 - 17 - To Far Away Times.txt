@@ -1,0 +1,2 @@
++name=chronotrigger=Chronotrigger - To Far Away Times
+pf=NES

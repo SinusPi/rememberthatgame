@@ -1,0 +1,2 @@
++name=ghosts.*goblins=Ghosts n' Goblins
+pf=C64,ZX,Arcade

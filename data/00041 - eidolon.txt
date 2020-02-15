@@ -1,0 +1,3 @@
++name=eidolon=The Eidolon
+pf=Atari,C64
+year=1985

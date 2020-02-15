@@ -1,0 +1,3 @@
++name=ghost *busters=Ghostbusters
+pf=C64,ZX,Atari,Amiga
+year=1984

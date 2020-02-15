@@ -1,0 +1,4 @@
++name=herbert=Herbert
+pf=Atari
+year=1988
+url=https://en.wikipedia.org/wiki/Herbert_(video_game)

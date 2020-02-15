@@ -1,0 +1,2 @@
++name=(warcraft|wc) *(ii|2)=Warcraft 2
+pf=PC

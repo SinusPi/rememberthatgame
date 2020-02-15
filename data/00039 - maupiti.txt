@@ -1,0 +1,3 @@
++name=maupiti=Maupiti Island
+pf=Amiga
+year=1990
