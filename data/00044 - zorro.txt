@@ -1,0 +1,3 @@
++name=zorro=Zorro
+pf=Atari,ZX,Amstrad,C64
+year=1985

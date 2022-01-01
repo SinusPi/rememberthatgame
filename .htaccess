@@ -1,0 +1,1 @@
+RewriteRule ^(\d+)$ ?q=$0 [L]

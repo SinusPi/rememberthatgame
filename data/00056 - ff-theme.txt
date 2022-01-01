@@ -1,0 +1,3 @@
++name=ff|final fantasy=Final Fantasy Theme
+pf=NES,PSX,PC
+year=1987-...

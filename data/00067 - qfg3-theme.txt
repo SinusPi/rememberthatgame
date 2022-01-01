@@ -1,0 +1,3 @@
++name=qfg=Quest for Glory
++fullname=(qfg|quest for glory) *(3|iii)=Quest for Glory 3
+pf=PC

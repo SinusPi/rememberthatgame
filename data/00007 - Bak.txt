@@ -1,0 +1,2 @@
++name=krondor=Betrayal at Krondor
+pf=PC

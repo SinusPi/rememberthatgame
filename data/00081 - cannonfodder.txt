@@ -1,0 +1,2 @@
++name=cannon *fodder=Cannon Fodder
+pf=Amiga

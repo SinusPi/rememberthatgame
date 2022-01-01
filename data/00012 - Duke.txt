@@ -1,0 +1,2 @@
++name=duke=Duke Nukem
+pf=PC

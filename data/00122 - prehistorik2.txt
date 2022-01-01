@@ -1,0 +1,3 @@
++name=prehistorik *(2|ii)=Prehistorik 2
+pf=PC,Amstrad
+year=1993

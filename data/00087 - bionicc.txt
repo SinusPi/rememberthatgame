@@ -1,0 +1,3 @@
++name=bionic comm?ando=Bionic Commando
+pf=Amiga,ST,Arcade,NES
+year=1987,1988

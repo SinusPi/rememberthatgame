@@ -1,0 +1,3 @@
++name=manic *miner=Manic Miner
+pf=ZX,C64
+year=1983

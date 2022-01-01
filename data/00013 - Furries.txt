@@ -1,0 +1,2 @@
++name=furries=Fury of the Furries
+pf=PC,Amiga

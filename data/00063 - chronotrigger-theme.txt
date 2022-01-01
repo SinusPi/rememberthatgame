@@ -1,0 +1,4 @@
++name=chronotrigger=Chronotrigger
+url=https://www.youtube.com/watch?v=L2NULozWgUM
+remix=1
+pf=NES

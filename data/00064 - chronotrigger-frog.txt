@@ -1,0 +1,5 @@
++name=chronotrigger=Chronotrigger
++character=frog=Frog's Theme
+url=https://www.youtube.com/watch?v=9vUtM9iySqg
+remix=1
+pf=NES

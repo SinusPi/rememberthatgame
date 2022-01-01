@@ -1,0 +1,4 @@
++name=ff|final fantasy=Final Fantasy
++title=prelude=Prelude
+pf=NES,PSX,PC
+year=1987-...

@@ -1,0 +1,3 @@
++name=golden axe=Golden Axe
+pf=Amiga,PC,NES,ZX,ST,C64,Arcade
+year=1989

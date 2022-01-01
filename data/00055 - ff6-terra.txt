@@ -1,0 +1,5 @@
++name=ff|final fantasy=Final Fantasy
++fullname=(ff|final fantasy) *(vi|6)=Final Fantasy VI
++character=terra=Terra's Theme
+pf=NES
+year=1994

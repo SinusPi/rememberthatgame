@@ -1,0 +1,2 @@
++name=lost vikings*=The Lost Vikings
+pf=PC,Amiga

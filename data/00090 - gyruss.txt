@@ -1,0 +1,2 @@
++name=gyruss=Gyruss
+pf=Arcade,Atari
