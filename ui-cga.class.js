@@ -121,6 +121,7 @@ class UI_CGA {
 			.find("[data-message]").hide().end()
 			.find(`[data-message='${type}']`).show()
 		if (type == "error" && err) $("#messages #error").html(err).show()
+		$("#footer").toggle(type=="intro")
 		$("#start").show()
 	}
 
@@ -207,7 +208,7 @@ class UI_CGA {
 
 		if (q.num > 0) {
 
-			$("#messages,#start").hide()
+			$("#messages,#footer,#start").hide()
 			$("#maincontainer,#leftpane,#scorepane").show()
 
 			let location_raw = window.location.toString().replace(/\/\d+$/,"")
