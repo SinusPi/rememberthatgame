@@ -1,2 +1,0 @@
-+name=dott|tentacle=Day of the Tentacle
-pf=PC

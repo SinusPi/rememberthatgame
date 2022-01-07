@@ -1,2 +1,0 @@
-+name=ski *or *die=Ski or Die
-pf=PC

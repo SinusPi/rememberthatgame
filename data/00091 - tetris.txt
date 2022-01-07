@@ -1,2 +1,0 @@
-+name=tetris=Tetris
-pf=NES,ZX,Atari,C64,PC,Amiga

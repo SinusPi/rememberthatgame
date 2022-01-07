@@ -1,2 +1,0 @@
-+name=daggerfall=Daggerfall - Shop theme
-pf=PC

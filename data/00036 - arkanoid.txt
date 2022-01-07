@@ -1,3 +1,0 @@
-+name=ar[ck]anoid=Arkanoid
-year=1986
-pf=Atari,C64,SNES,Amiga,PC

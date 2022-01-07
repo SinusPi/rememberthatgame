@@ -1,2 +1,0 @@
-+name=spelunker=Spelunker
-pf=Atari

@@ -1,3 +1,0 @@
-+name=jsw|jet *set *willy=Jet Set Willy
-pf=Atari,ZX
-year=1984

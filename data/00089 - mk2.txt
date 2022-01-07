@@ -1,2 +1,0 @@
-+name=mk|mortal [ck]ombat=Mortal Kombat 2
-pf=PC,Arcade,Amiga

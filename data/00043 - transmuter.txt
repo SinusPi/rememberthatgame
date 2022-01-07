@@ -1,3 +1,0 @@
-+name=transmuter=Transmuter
-pf=Amstrad,Atari,ZX
-year=1987

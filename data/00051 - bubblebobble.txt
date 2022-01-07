@@ -1,2 +1,0 @@
-+name=b[uo]bble *b[ou]bble=Bubble Bobble
-pf=Amiga,Arcade,NES,PSX

@@ -1,5 +1,0 @@
-+name=ff|final fantasy=Final Fantasy
-+fullname=(ff|final fantasy) *(v|5)=Final Fantasy V
-=Final Fantasy V - Fanfare
-pf=NES
-year=1992

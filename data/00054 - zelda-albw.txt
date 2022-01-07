@@ -1,2 +1,0 @@
-+name=zelda=Zelda - Main Theme
-pf=NES,3DS

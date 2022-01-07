@@ -1,3 +1,0 @@
-+title=swan *lake=Swan Lake (Tchaikovsky)
-+name=loom=Loom
-pf=Amiga,PC

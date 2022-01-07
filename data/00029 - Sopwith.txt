@@ -1,3 +1,0 @@
-+name=sopwith=Sopwith
-year=1985
-pf=PC

@@ -1,2 +1,0 @@
-+name=settlers=The Settlers
-pf=Amiga,PC

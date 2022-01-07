@@ -1,5 +1,0 @@
-+name=draconus=Draconus
-pf=Atari,C64,ZX
-year=1988
-cmp=Adam Gilmore
-url=https://en.wikipedia.org/wiki/Draconus

@@ -1,5 +1,0 @@
-+name=kq|king'?s *quest=King's Quest
-+fullname=(kq|king'?s *quest) *(6|vi)=King's Quest VI
-+title=flowers=Wallflowers
-pf=PC
-year=1992

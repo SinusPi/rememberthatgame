@@ -1,2 +1,0 @@
-+name=dune=Dune
-pf=PC,Amiga

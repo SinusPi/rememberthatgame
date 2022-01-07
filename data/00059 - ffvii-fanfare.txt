@@ -1,5 +1,0 @@
-+name=ff|final fantasy=Final Fantasy
-+fullname=(ff|final fantasy) *(vii|7)=Final Fantasy VII
-=Final Fantasy VII - Fanfare
-pf=PC,PSX
-year=1997

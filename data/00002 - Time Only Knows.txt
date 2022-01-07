@@ -1,2 +1,0 @@
-+name=prince|sands of time|pop.*sot=Prince of Persia: Sands of Time (ending)
-pf=PC

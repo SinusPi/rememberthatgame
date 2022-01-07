@@ -1,2 +1,0 @@
-+name=larry=Leisure Suit Larry
-pf=PC

@@ -1,2 +1,0 @@
-+name=bomb *jack=Bomb Jack
-pf=ZX,C64,Amiga,Arcade
