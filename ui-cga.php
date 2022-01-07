@@ -86,7 +86,7 @@
 					<form id="qform"><img id="gt" src="img/gt-c.gif"><input id="input" type="text"><a id="ok" class="cyanbut">OK</a></form>
 					<h2 id='correct1'>Correct!</h2>
 					<h1 id='correct2'></h1>
-					<h3 id='correct3'></h3>
+					<div id='correct3'></div>
 					<p><a id="next" class="cyanbut" href="#">NEXT</a></p>
 					<div class="tutorial" data-tutfor="next">Skip: Move on to the next question.</div>
 					<!--

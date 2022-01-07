@@ -139,6 +139,7 @@ class UI_CGA {
 
 	// called by GAME: correct answer
 	ShowCorrect(score, hint = false) {
+		console.log("Showing correct:",score)
 		let color = ""
 		let $score = $("#score" + score)
 
@@ -174,10 +175,10 @@ class UI_CGA {
 			//trivia
 			let $c3 = $("#correct3")
 			$c3.empty()
-			if (Q.url) $c3.append("<p><a target='_blank' href='" + Q.url + "'>Click here</a> for the full track.</p>")
-			if (Q.composer) $c3.append(`<p>Composer: ${Q.composer}</p>`)
-			if (Q.publisher) $c3.append(`<p>Publisher: ${Q.publisher}</p>`)
-			if (Q.trivia) $c3.append(`<p><b>Trivia<b></p>${Q.trivia.map(s=>"<p>"+s+"</p>").join("")}</p>`)
+			if (Q.url) $c3.append("<h3>Full track</h3><p><a target='_blank' href='" + Q.url + "'>Click here</a> to listen.</p>")
+			if (Q.composer) $c3.append(`<h3>Composer:</h3><p>${Q.composer}</p>`)
+			if (Q.publisher) $c3.append(`<h3>Publisher:</h3>${Q.publisher}</p>`)
+			if (Q.trivia) $c3.append(`<h3>Trivia:</h3>${Q.trivia.map(s=>"<p>"+s+"</p>").join("")}</p>`)
 			$c3.toggle($c3[0].childNodes.length>0)
 
 			$("#qform").hide()
