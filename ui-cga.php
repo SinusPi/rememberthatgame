@@ -55,6 +55,12 @@
 			</div>
 		</div>
 		<p><a class="cyanbut" id="start" href="#">START</a></p>
+		
+		<div id="footer">
+			<p class="small">
+				<b>Contributors:</b> Sinus.Pi, FatalBomb
+			</p>
+		</div>
 
 		<div id="maincontainer">
 			<div id="leftpane"></div>
