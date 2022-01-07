@@ -1,3 +1,0 @@
-+name=krondor=Betrayal at Krondor
-+title=kingdom mine=This Kingdom Mine
-pf=PC

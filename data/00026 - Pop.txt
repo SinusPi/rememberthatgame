@@ -1,2 +1,0 @@
-+name=prince=Prince of Persia
-pf=PC

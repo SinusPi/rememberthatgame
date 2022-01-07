@@ -1,2 +1,0 @@
-+name=gk|gabriel knight=Gabriel Knight: Sins of the Fathers
-pf=PC

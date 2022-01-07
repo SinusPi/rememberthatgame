@@ -161,6 +161,8 @@ function readit($f) {
 	}
 	$q['pf'] = explode(",", $q['pf']);
 
+	if (isset($q['trivia'])) settype($q['trivia'],"array");
+
 	// save converted!
 	save_json($q,$f);
 

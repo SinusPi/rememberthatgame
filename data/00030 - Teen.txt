@@ -1,2 +1,0 @@
-+name=teen *agent=Teenagent
-pf=PC

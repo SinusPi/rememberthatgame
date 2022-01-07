@@ -1,2 +1,0 @@
-+name=monkey *island=Curse of Monkey Island
-pf=PC

@@ -1,2 +1,0 @@
-+name=kq|king.*quest=King's Quest V
-pf=PC

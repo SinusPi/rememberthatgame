@@ -1,2 +1,0 @@
-+name=gods=Gods
-pf=Amiga

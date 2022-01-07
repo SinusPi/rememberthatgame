@@ -1,2 +1,0 @@
-+name=wild *arms=Wild Arms
-pf=PSX

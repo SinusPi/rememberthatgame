@@ -1,3 +1,0 @@
-+name=alley cat=Alley Cat
-year=1984
-pf=PC

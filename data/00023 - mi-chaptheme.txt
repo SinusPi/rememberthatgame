@@ -1,2 +1,0 @@
-+name=monkey *island=Secret of the Monkey Island
-pf=PC,Amiga

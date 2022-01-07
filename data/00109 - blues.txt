@@ -1,2 +1,0 @@
-+name=blues=Blues Brothers
-pf=Amiga,PC,C64

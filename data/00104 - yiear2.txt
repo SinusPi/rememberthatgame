@@ -1,3 +1,0 @@
-+name=yi?e? ?ar ?kung[- ]*fu=Yie Ar Kung-Fu
-pf=Arcade,NES,ZX,C64,Amstrad
-year=1985

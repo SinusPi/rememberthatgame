@@ -1,3 +1,0 @@
-+name=star *quake=Starquake
-pf=C64,Atari,ZX,Amstrad,PC,Amiga
-year=1985,2018

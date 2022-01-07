@@ -1,2 +1,0 @@
-+name=incredible machine=The Incredible Machine
-pf=PC

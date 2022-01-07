@@ -1,2 +1,0 @@
-+name=blood *wych=Bloodwych
-pf=PC

@@ -1,2 +1,0 @@
-+name=pinball *dreams=Pinball Dreams
-pf=Amiga,PC

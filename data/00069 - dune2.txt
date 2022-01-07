@@ -1,2 +1,0 @@
-+name=dune *(2|ii)=Dune II
-pf=PC

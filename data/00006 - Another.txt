@@ -1,2 +1,0 @@
-+name=another world=Another World
-pf=PC,Amiga

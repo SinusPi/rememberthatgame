@@ -1,3 +1,0 @@
-+name=goonies=The Goonies
-year=1985
-pf=Atari,C64,ZX,NES

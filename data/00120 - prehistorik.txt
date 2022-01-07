@@ -1,3 +1,0 @@
-+name=prehistorik=Prehistorik
-pf=Amiga,PC,ST,Amstrad
-year=1991

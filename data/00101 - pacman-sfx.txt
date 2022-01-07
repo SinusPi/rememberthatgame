@@ -1,2 +1,0 @@
-+name=pac?k? ?-? ?man=Pac-Man
-pf=Arcade,Atari,C64,NES

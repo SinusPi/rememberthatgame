@@ -1,4 +1,0 @@
-+name=qfg=Quest for Glory
-+fullname=(qfg|quest for glory) *(2|ii)=Quest for Glory 2
-=Quest for Glory 2 - Main Theme
-pf=PC

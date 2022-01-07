@@ -1,2 +1,0 @@
-+name=lotr|lord.*rings=Lord of the Rings (Interplay)
-pf=PC

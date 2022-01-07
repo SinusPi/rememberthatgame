@@ -1,2 +1,0 @@
-+name=lotus (3|iii)=Lotus 3: Turbo Challenge
-pf=Amiga,PC

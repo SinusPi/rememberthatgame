@@ -1,5 +1,0 @@
-+name=sabote?u?r *(2|ii)=Saboteur 2
-pf=ZX,C64,Amstrad,PC
-year=1987
-cmp=Rob Hubbard
-url=https://www.youtube.com/watch?v=HJcxU67LX2s

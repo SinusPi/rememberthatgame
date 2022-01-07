@@ -1,2 +1,0 @@
-+name=krakout=Krakout
-pf=C64

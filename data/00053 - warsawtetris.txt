@@ -1,5 +1,0 @@
-+name=tetris=... Tetris
-+fullname=warsaw tetris=Warsaw Tetris
-url=https://www.youtube.com/watch?v=Bi1oLYRipOA
-pf=Atari
-year=1989

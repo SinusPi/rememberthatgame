@@ -1,2 +1,0 @@
-+name=keen=Commander Keen 4
-pf=PC

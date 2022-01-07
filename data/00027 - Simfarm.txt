@@ -1,2 +1,0 @@
-+name=sim *farm=Sim Farm
-pf=PC

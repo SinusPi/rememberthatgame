@@ -1,3 +1,0 @@
-+name=dynablaster|bomber *man=Bomberman / Dynablaster
-pf=Amiga,PC,NES
-year=1985,1990

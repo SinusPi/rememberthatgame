@@ -1,3 +1,0 @@
-+name=bruce lee=Bruce Lee
-pf=Atari,C64,ZX,PC
-year=1984,1986

@@ -1,3 +1,0 @@
-+name=(world|international|karate)|^ik\+=World Karate Championship / International Karate
-pf=Atari,C64
-year=1986
