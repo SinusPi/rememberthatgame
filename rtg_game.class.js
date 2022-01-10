@@ -60,6 +60,10 @@ class RTG_GAME {
 		}
 	}
 
+	location_raw() {
+		return window.location.toString().replace(/\/\d+$/,"")
+	}	
+
 	OnError(msg) {
 		this.UI.OnError(msg)
 	}
@@ -76,6 +80,7 @@ class RTG_GAME {
 
 	verify_question(q) {
 		try {
+			if (!q.scores) throw "no scores";
 			for (let s in q.scores) {
 				let score = q.scores[s]
 				if (!score.answer.toLowerCase().match(score.re)) {
@@ -85,7 +90,7 @@ class RTG_GAME {
 			}
 			return true
 		} catch (e) {
-			$.ajax("/remember-that-game/feedback.php?q=" + q.num + "&fb=" + e) // report problem
+			$.ajax(this.location_raw()+"feedback.php?q=" + q.num + "&fb=" + e) // report problem
 			console.error("Failed verifying question " + q.num + ":", e)
 		}
 	}
@@ -94,7 +99,7 @@ class RTG_GAME {
 		console.log("GAME.SavePrefs", prefs)
 		this.prefs = prefs
 		let this_game = this
-		$.get("q.php?do=pf&" + prefs.map(s => `pf[]=${s}`).join("&"), function (data) {
+		$.get("q.php?" + prefs.map(s => `pf[]=${s}`).join("&"), function (data) {
 			console.log("prefs saved:", data)
 			this_game.get_status_from_response(data)
 		})
@@ -108,7 +113,7 @@ class RTG_GAME {
 		$.get({
 			url: "q.php?do=q"
 				+ (num ? "&q=" + num : "") // load specific q
-				+ "&" + urialize(this.Prefs) // save prefs
+				//+ "&" + urialize(this.Prefs) // save prefs
 				+ ((this.Q && this.Q.num) ? "&seen=" + this.Q.num : ""), //mark Q seen
 			success: function (data, status, jqhxr) {
 				console.log("q.php sends data:", data)
@@ -122,6 +127,8 @@ class RTG_GAME {
 
 	OnQuestionReceived(data, dontpush) {
 		this.get_status_from_response(data)
+
+		if (data.unseen==0) return this.UI.ShowEnd()
 
 		let q = data.q
 
@@ -140,8 +147,7 @@ class RTG_GAME {
 		console.log("Loaded and verified question " + q.num)
 
 		if (!dontpush) {
-			let location_raw = window.location.toString().replace(/\/\d+$/,"")
-			history.pushState({ q: q.num }, "Remember That Game? Question #" + q.num, location_raw + "/" + q.num)
+			history.pushState({ q: q.num }, "Remember That Game? Question #" + q.num, this.location_raw() + "/" + q.num)
 			console.log("pushed state " + q.num)
 		}
 
@@ -162,7 +168,7 @@ class RTG_GAME {
 		if (data.seen != null)
 			this.Totalseen = data.seen
 
-		if (data.match) this.UI.OnMatchedChanged(data.match)
+		if (data.match!=null) this.UI.OnMatchedChanged(data.match)
 
 		this.UI.ShowScore(data)
 	}
