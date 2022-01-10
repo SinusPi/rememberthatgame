@@ -3,6 +3,8 @@ define ("DO_FACEBOOK",true);
 
 define ("UI","cga");
 
+session_id("rtg"); session_start();
+
 $PLATFORMS = ['all'=>"All", 'ZX'=>"ZX Spectrum",'Atari'=>"Atari",'C64'=>"C-64",'Amiga'=>"Amiga",'ST'=>"Atari ST",'PC'=>"PC",'NES'=>"NES, SNES",'PSX'=>"PlayStation",'Arcade'=>"Arcade"];
 
 if (strpos($_SERVER['HTTP_USER_AGENT'],"Firefox")!==FALSE) $htmlclass="ua-ff";

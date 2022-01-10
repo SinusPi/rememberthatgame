@@ -98,7 +98,7 @@ class UI_CGA {
 	}
 	save_prefs() {
 		//console.log("platforms",platforms)
-		GAME.SavePrefs($("#prefform").serializeArray().reduce((o, kv) => ([...o, kv.value]), []))
+		GAME.SavePrefs($("#prefform").serializeArray().reduce((o, kv) => [...o, kv.value], [])) //.filter(n=>n)
 	}
 
 
@@ -268,11 +268,13 @@ class UI_CGA {
 				FB.XFBML.parse()
 			}
 
-		} else if (data.unseen === 0) {
-			this.ShowMessage("end")
 		} else {
 			this.ShowMessage("error", "Oops! Something crashed!")
 		}
+	}
+
+	ShowEnd() {
+		this.ShowMessage("end")
 	}
 
 
