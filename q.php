@@ -53,7 +53,7 @@ if (!isset($_SESSION['matched'])) {
 
 // throw away seen
 $unseen = array_filter($_SESSION['matched'], function ($qn) {
-	return (!in_array($qn, (array)$_SESSION['seen']) // num wasn't seen
+	return (!in_array($qn, $_SESSION['seen']) // num wasn't seen
 	);
 });
 
@@ -64,12 +64,6 @@ if ($_REQUEST['q']) {
 	// pick from unseen
 	if (count($unseen)) {
 		$qnum = $unseen[array_rand($unseen)];
-		mark_seen($qnum);
-		// throw away seen
-		$unseen = array_filter($_SESSION['matched'], function ($qn) {
-			return (!in_array($qn, (array)$_SESSION['seen']) // num wasn't seen
-			);
-		});
 	} else {
 		$qnum=0;
 	}
