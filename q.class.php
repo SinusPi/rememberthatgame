@@ -55,7 +55,7 @@ class Q implements ArrayAccess {
 		
 		$q = new Q();
 
-		preg_match("/^(\\d+) \\- (.*)/", basename($f), $ms);
+		preg_match("/(\\d+) \\- (.*)/", $f, $ms);
 		$q['num'] = intval($ms[1]);
 		$q['file'] = $file;
 		$q['type'] = $ext;
@@ -117,8 +117,9 @@ class Q implements ArrayAccess {
 
 	public function save_json($f) {
 		// remove default fields
-		unset($this['num'],$this['file'],$this['type']);
-		$json = json_encode($this,JSON_PRETTY_PRINT);
+		$vals = $this->getValues();
+		unset($vals['num'],$vals['file'],$vals['type']);
+		$json = json_encode($vals,JSON_PRETTY_PRINT);
 		if ($json) file_put_contents($f,$json);
 	}
 	
