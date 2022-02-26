@@ -1,11 +1,11 @@
 <?php
 class Q implements ArrayAccess {
-	public static $folder = "data";
-	public static $convert_to_json = true;
+	static $folder = "data";
+	static $convert_to_json = true;
 
 	private $container = array();
 
-	public function offsetSet($offset,$value) {
+	function offsetSet($offset,$value):void {
         if (is_null($offset)) {
             $this->container[] = $value;
         } else {
@@ -13,28 +13,28 @@ class Q implements ArrayAccess {
         }
     }
 
-    public function offsetExists($offset) {
+    function offsetExists($offset):bool {
         return isset($this->container[$offset]);
     }
 
-    public function offsetUnset($offset) {
+    function offsetUnset($offset):void {
         unset($this->container[$offset]);
     }
 
-    public function offsetGet($offset) {
+    function offsetGet($offset) {
         return isset($this->container[$offset]) ? $this->container[$offset] : null;
     }
 
-	public function __construct($a=null)
+	function __construct($a=null)
 	{
 		$this->setValues($a ?: []);
 	}
 
-	public function setValues($a) {
+	function setValues($a) {
 		$this->container = $a;
 	}
 
-	public function getValues() {
+	function getValues() {
 		return $this->container;
 	}
 
@@ -115,7 +115,7 @@ class Q implements ArrayAccess {
 		return $q;
 	}
 
-	public function save_json($f) {
+	function save_json($f) {
 		// remove default fields
 		$vals = $this->getValues();
 		unset($vals['num'],$vals['file'],$vals['type']);
@@ -123,11 +123,11 @@ class Q implements ArrayAccess {
 		if ($json) file_put_contents($f,$json);
 	}
 	
-	public static function read_json($json) {
+	static function read_json($json) {
 		return $json; // no postprocessing for now
 	}
 
-	public static function glob_all_datafiles($dir)	{
+	static function glob_all_datafiles($dir)	{
 		return glob($dir . "????? - *.txt");
 	}
 }
