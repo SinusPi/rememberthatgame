@@ -30,26 +30,49 @@ if (!isset($_SESSION['matched'])) {
 	$fs = Q::glob_all_datafiles("data/");
 
 	// read ALL QUESTIONS into $QS
-	$questions_all = [];
+	$questions = [];
 	foreach ($fs as $f) {
 		try {
 			$q = Q::read_q($f)->getValues();
-			$questions_all[]=$q;
+			$questions[]=$q;
 		} catch (Exception $e) {
 			header("X-rtg-q-error: ".$f." ".$e->getMessage(),false);
 		}
 	}
 
+	$_SESSION['total'] = count($questions);
+
+	$settings = @json_decode(file_get_contents("data/settings.json"),true);
+	if ($settings) {
+		foreach ($settings['sets'] as &$set) {
+			if ($set['type']=="max-in-set") {
+				$set['_chosen']=array_values(array_intersect_key($set['set'],array_flip(array_rand($set['set'],2))));
+				shuffle($set['_chosen']);
+			}
+		}
+		unset($set);
+	}
+
 	// throw away mismatched
-	$questions_matched = array_filter($questions_all, function ($q) {
+	$questions = array_filter($questions, function ($q) {
 		return ($q
 			&& (empty($_SESSION['prefs']) || count(array_intersect($q['pf'], $_SESSION['prefs'])) > 0) // at least one pf_y is present in pf
 			//&& (!empty($pf_n) || count(array_intersect($q['pf'], $pf_n)) != count($q['pf'])) // not all of pf is in pf_n
 		);
 	});
 
-	$_SESSION['total'] = count($questions_all);
-	$_SESSION['matched']=array_map(function($q) { return $q['num']; },$questions_matched);
+	// apply special rules
+	if ($settings && isset($settings['sets'])) {
+		$questions = array_filter($questions, function ($q) use ($settings) {
+			foreach ($settings['sets'] as &$set) {
+				if ($set['type']=="max-in-set" && in_array($q['num'],$set['set']))
+					return in_array($q['num'],$set['_chosen']);
+			}
+			return true;
+		});
+	}
+
+	$_SESSION['matched']=array_column($questions,'num');
 }
 
 // throw away seen
@@ -82,6 +105,7 @@ try {
 
 $RET['total'] = $_SESSION['total'];
 $RET['match'] = count($_SESSION['matched']);
+$RET['match_raw'] = $_SESSION['matched'];
 $RET['unseen'] = count($unseen);
 $RET['seen'] = count($_SESSION['seen']);
 $RET['totalscore']=count($_SESSION['guessed']);
