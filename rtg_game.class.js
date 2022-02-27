@@ -28,7 +28,7 @@ class RTG_GAME {
 
 	SetupHistory() {
 		window.addEventListener('popstate', (event) => {
-			if (event.state && event.state.q) this.load_question(event.state.q, true);
+			if (event.state && event.state.q) this.NextQuestion(event.state.q, true);
 		})
 	}
 
@@ -70,7 +70,7 @@ class RTG_GAME {
 
 	Start() {
 		this.UI.OnStart && this.UI.OnStart()
-		this.load_question(INIT_NUM, true)
+		this.NextQuestion(INIT_NUM, true)
 		this.Started = true
 	}
 
@@ -106,7 +106,7 @@ class RTG_GAME {
 	}
 
 
-	load_question(num = null, dontpush = false) {
+	NextQuestion(num = null, dontpush = false) {
 		this.Audio.player.pause()
 		this.UI.OnQuestionLoading()
 		let this_game = this
@@ -139,7 +139,7 @@ class RTG_GAME {
 				this.UI.ShowMessage("error", "Too many consecutive broken questions. Reload?")
 				return
 			}
-			setTimeout(() => this.load_question(), 1000)
+			setTimeout(() => this.NextQuestion(), 1000)
 			return
 		}
 		this.Subseq_errors = 0
@@ -168,7 +168,7 @@ class RTG_GAME {
 		if (data.seen != null)
 			this.Totalseen = data.seen
 
-		if (data.match!=null) this.UI.OnMatchedChanged(data.match)
+		if (data.match!=null) this.UI.OnMatchedChanged(data.match,data.unseen)
 
 		this.UI.ShowScore(data)
 	}
