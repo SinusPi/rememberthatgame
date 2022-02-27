@@ -48,7 +48,8 @@ class Q implements ArrayAccess {
 	static function read_q($qfilename) {
 		$q = new Q();
 
-		$q['num'] = intval($qfilename);
+		preg_match("/(\\d+) \\- (.*)/", $qfilename, $ms);
+		$q['num'] = intval($ms[1]);
 
 		foreach (["mp3","png","gif"] as $ext) {
 			$cluefile = str_replace(".txt", ".$ext", $qfilename);
