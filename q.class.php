@@ -45,30 +45,37 @@ class Q implements ArrayAccess {
 		return self::read_q($files[0]);
 	}
 
-	static function read_q($f) {
-		$found=false;
-		foreach (["mp3","png","gif"] as $ext) {
-			$file = str_replace(".txt", ".".$ext, $f);
-			if (file_exists($file)) { $found=true; break; }
-		}
-		if (!$found) throw new Exception("Data file not found for $f.");
-		
+	static function read_q($qfilename) {
 		$q = new Q();
 
-		preg_match("/(\\d+) \\- (.*)/", $f, $ms);
-		$q['num'] = intval($ms[1]);
-		$q['file'] = "get.php?q=".$q['num'];
-		$q['type'] = $ext;
+		$q['num'] = intval($qfilename);
+
+		foreach (["mp3","png","gif"] as $ext) {
+			$cluefile = str_replace(".txt", ".$ext", $qfilename);
+			if (file_exists($cluefile)) {
+				$q['type']=$ext;
+				$q['file']=$cluefile;
+				break;
+			}
+		}
+		if (!$q['type']) throw new Exception("No data file found for $qfilename.");
 	
 		// if it's JSON, use it and bail.
-		$file = file_get_contents($f);
-		$json = @json_decode($file,true);
+		$qfile = file_get_contents($qfilename);
+		$json = @json_decode($qfile,true);
 		if ($json) {
 			$q->setValues(array_merge($q->getValues(),Q::read_json($json)));
 			return $q;
 		}
 	
-		$meta = file($f);
+		// if it's an old-style question, read it and convert.
+		$q->read_from_old_file($qfilename);
+
+		return $q;
+	}
+
+	function read_from_old_file($filename) {
+		$meta = file($filename);
 		foreach ($meta as $m) {
 			$m = trim($m);
 			$c = substr($m, 0, 1);
@@ -78,41 +85,43 @@ class Q implements ArrayAccess {
 			elseif (preg_match("/^([a-z]+)=(.*)/", $m, $ms)) {
 				$key=$ms[1]; $val=$ms[2];
 				if (!isset($q[$key]))
-					$q[$key] = $val;
+					$this[$key] = $val;
 				else
-					$q[$key] = array_merge((array)$q[$key],(array)$val);
+					$this[$key] = array_merge((array)$this[$key],(array)$val);
 			}
 			elseif (preg_match("/^(\\-+)(.*)/", $m, $ms)) {
 				//$score=1/(strlen($ms[1])+1);
-				//$q['scores'][]=['score'=>$score,'re'=>$ms[2]];
-			} elseif /* + */ (preg_match("/^\\+([a-z]+|\".*?\")=(.*)=(.*)/", $m, $ms)) { // text name 
-				$name = $ms[1];
-				$re = $ms[2];
-				$answer = $ms[3];
-				settype($q['scores'],"array");
-				$q['scores'][] = ['name' => $name, 're' => $re, 'answer' => $answer];
-			} elseif /* * */ (preg_match("/^\\*([a-z]+|\".*?\")=(.*)\\s*\\|\\s*(.*)/", $m, $ms)) { // multiple choice
+				//$this['scores'][]=['score'=>$score,'re'=>$ms[2]];
+			} elseif /* + */ (preg_match("/^\\+([a-z]+|\".*?\")=(.*)=(.*)/", $m, $ms)) { // text name: +name=go.*od=Good
+				list($_,$name,$re,$answer) = $ms;
+				$qs = (array)$this['scores'];
+				$qs[] = ['name' => $name, 're' => $re, 'answer' => $answer];
+				$this['scores']=$qs;
+			} elseif /* * */ (preg_match("/^\\*([a-z]+|\".*?\")=(.*)\\s*\\|\\s*(.*)/", $m, $ms)) { // multiple choice: *name=Good=Bad,Bad,Bad
 				$name = $ms[1];
 				$answer = trim($ms[2]);
 				$wrongs = preg_split("/\\s*,\\s*/",$ms[3]);
-				settype($q['multiple'],"array");
-				$q['multiple'][] = ['name' => $name, 'answer' => $answer, 'wrongs' => $wrongs];
+				$qm = (array)$this['multiple'];
+				$qm[] = ['name' => $name, 'answer' => $answer, 'wrongs' => $wrongs];
+				$this['multiple']=$qm;
 			} else {
 				// legacy
 				$re = $m;
 				unset($answer);
-				$q['scores'][1]['tag']="name";
-				$q['scores'][1]['re']=$re;
+				$this['scores'][1]['tag']="name";
+				$this['scores'][1]['re']=$re;
 			}
 		}
-		$q['pf'] = explode(",", $q['pf']);
+		if (!$this['pf']) $this['pf']="PC";
+		$this['pf'] = explode(",", $this['pf']);  
 	
-		if (isset($q['trivia'])) settype($q['trivia'],"array");
+		if (isset($this['trivia'])) settype($this['trivia'],"array");
 	
-		// save converted!
-		if (self::$convert_to_json) $q->save_json($f);
 
-		return $q;
+		if (count((array)$this['scores'])==0 && count((array)$this['multiple'])==0) throw new Exception("bad q ".$this['num']); // bad question
+
+		// save converted!
+		if (self::$convert_to_json) $this->save_json($filename);
 	}
 
 	function save_json($f) {
