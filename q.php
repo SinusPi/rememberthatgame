@@ -32,11 +32,12 @@ if (!isset($_SESSION['matched'])) {
 	// read ALL QUESTIONS into $QS
 	$questions_all = [];
 	foreach ($fs as $f) {
-		$q = Q::read_q($f)->getValues();
-		if (!$q)
-			header("X-rtg-q-error: ".$f,false);
-		else
+		try {
+			$q = Q::read_q($f)->getValues();
 			$questions_all[]=$q;
+		} catch (Exception $e) {
+			header("X-rtg-q-error: ".$f." ".$e->getMessage(),false);
+		}
 	}
 
 	// throw away mismatched
