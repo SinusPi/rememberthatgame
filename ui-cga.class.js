@@ -23,13 +23,13 @@ class UI_CGA {
 		$('#qform').submit(function (e) { e.preventDefault(); this_ui.OnAnswer(); return false })
 
 		$("#prefbut").show().click(() => { $("#prefs").slideToggle(); $("#prefbut").toggleClass("open"); return false });
-		$("#prefform .apply").click(() => { $("#prefs").slideUp(), $("#prefbut").removeClass("open"); if (GAME.Started) GAME.load_question(); return false })
+		$("#prefform .apply").click(() => { $("#prefs").slideUp(), $("#prefbut").removeClass("open"); if (GAME.Started) GAME.NextQuestion(); return false })
 		$("#prefform .reset_seen").click(() => { $("#prefs").slideUp(), $("#prefbut").removeClass("open"), $.get("q.php?reset_seen=1", function () { GAME.Q = null; if (GAME.Started) GAME.load_question() }); return false });
 		$("#prefform .reset_score").click(() => { $("#prefs").slideUp(), $("#prefbut").removeClass("open"), $.get("q.php?reset_score=1", function () { GAME.Q = null; if (GAME.Started) GAME.load_question() }); return false });
 		$("#prefform .reset_tut").click(() => { $("#prefs").slideUp(), $("#prefbut").removeClass("open"), tutorials_reset(), GAME.Start(); return false });
 
 		$("#start").click(() => { GAME.Start(); return false })
-		$("#next").click(() => { GAME.load_question(); return false })
+		$("#next").click(() => { GAME.NextQuestion(); return false })
 		$("#play").click(() => { GAME.StartAudio(); $('#input').focus(); return false })
 		$("#pause").click(() => { GAME.Audio.player.pause(); $('#input').focus(); return false })
 
@@ -61,8 +61,8 @@ class UI_CGA {
 		this.update_pref_all()
 	}
 	// called by GAME: when number of matched questions changes
-	OnMatchedChanged(match) {
-		$("#prefmatch").html("Matching questions: " + match)
+	OnMatchedChanged(match,unseen) {
+		$("#prefmatch").html("Matching questions: " + match + "<br>Unseen: " + unseen)
 	}
 
 	// called by GAME: when engine starts loading the next question
