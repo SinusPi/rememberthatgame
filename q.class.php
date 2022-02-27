@@ -57,7 +57,7 @@ class Q implements ArrayAccess {
 
 		preg_match("/(\\d+) \\- (.*)/", $f, $ms);
 		$q['num'] = intval($ms[1]);
-		$q['file'] = $file;
+		$q['file'] = "get.php?q=".$q['num'];
 		$q['type'] = $ext;
 	
 		// if it's JSON, use it and bail.
