@@ -1,6 +1,6 @@
 <div id="container" style="display:none;">
 		<h2 id="title">
-			<a class='titlelink' href="index.php">Remember That Game?</a>
+			<a class='titlelink' href="index.php">Your Game Sounds Familiar!</a>
 			<a href="#" id="prefbut">
 				<svg width="100%" height="100%" viewBox="0 0 50 50"  preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
 					<g id="Layer_1">
