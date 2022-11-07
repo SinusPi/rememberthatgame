@@ -177,7 +177,7 @@ h2#title {
 }
 
 #ok {
-  width: 30px;
+  width: 5em;
   cursor: pointer;
 }
 
@@ -295,6 +295,7 @@ a.cyanbut {
   text-transform: uppercase;
   font-size: 0.8em;
   margin: 6px auto;
+  text-align: center;
 }
 
 #commentsbox {

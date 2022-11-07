@@ -188,7 +188,7 @@ h2#title {
   margin-left: 4px;
 }
 #ok {
-  width:30px; cursor:pointer;
+  width:5em; cursor:pointer;
 }
 #input:focus,
 a:focus,
@@ -309,6 +309,7 @@ a.cyanbut {
   text-transform: uppercase;
   font-size: 0.8em;
   margin: 6px auto;
+  text-align: center;
 }
 
 #commentsbox {
