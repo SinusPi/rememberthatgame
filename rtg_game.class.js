@@ -28,7 +28,7 @@ class RTG_GAME {
 
 	SetupHistory() {
 		window.addEventListener('popstate', (event) => {
-			if (event.state && event.state.q) this.load_question(event.state.q, true);
+			if (event.state && event.state.q) this.NextQuestion(event.state.q, true, false);
 		})
 	}
 
@@ -70,7 +70,7 @@ class RTG_GAME {
 
 	Start() {
 		this.UI.OnStart && this.UI.OnStart()
-		this.load_question(INIT_NUM, true)
+		this.NextQuestion(INIT_NUM, true, false)
 		this.Started = true
 	}
 
@@ -106,7 +106,7 @@ class RTG_GAME {
 	}
 
 
-	load_question(num = null, dontpush = false) {
+	NextQuestion(num = null, dontpush = false, skip = false) {
 		this.Audio.player.pause()
 		this.UI.OnQuestionLoading()
 		let this_game = this
@@ -114,7 +114,7 @@ class RTG_GAME {
 			url: "q.php?do=q"
 				+ (num ? "&q=" + num : "") // load specific q
 				//+ "&" + urialize(this.Prefs) // save prefs
-				+ ((this.Q && this.Q.num) ? "&seen=" + this.Q.num : ""), //mark Q seen
+				+ ((this.Q && this.Q.num && skip) ? "&seen=" + this.Q.num : ""), //mark Q seen
 			success: function (data, status, jqhxr) {
 				console.log("q.php sends data:", data)
 				this_game.OnQuestionReceived(data, dontpush)
@@ -139,7 +139,7 @@ class RTG_GAME {
 				this.UI.ShowMessage("error", "Too many consecutive broken questions. Reload?")
 				return
 			}
-			setTimeout(() => this.load_question(), 1000)
+			setTimeout(() => this.NextQuestion(null,false,true), 1000)
 			return
 		}
 		this.Subseq_errors = 0
@@ -168,7 +168,7 @@ class RTG_GAME {
 		if (data.seen != null)
 			this.Totalseen = data.seen
 
-		if (data.match!=null) this.UI.OnMatchedChanged(data.match)
+		if (data.match!=null) this.UI.OnMatchedChanged(data.match,data.unseen)
 
 		this.UI.ShowScore(data)
 	}

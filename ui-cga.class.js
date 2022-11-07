@@ -7,6 +7,11 @@
 		*/
 class UI_CGA {
 
+	Close_Menu() {
+		$("#prefs").slideUp()
+		$("#prefbut").removeClass("open")
+	}
+
 	// called by GAME: when engine initialization is complete
 	Init() {
 		this.init_checkboxes()
@@ -23,13 +28,13 @@ class UI_CGA {
 		$('#qform').submit(function (e) { e.preventDefault(); this_ui.OnAnswer(); return false })
 
 		$("#prefbut").show().click(() => { $("#prefs").slideToggle(); $("#prefbut").toggleClass("open"); return false });
-		$("#prefform .apply").click(() => { $("#prefs").slideUp(), $("#prefbut").removeClass("open"); if (GAME.Started) GAME.load_question(); return false })
-		$("#prefform .reset_seen").click(() => { $("#prefs").slideUp(), $("#prefbut").removeClass("open"), $.get("q.php?reset_seen=1", function () { GAME.Q = null; if (GAME.Started) GAME.load_question() }); return false });
-		$("#prefform .reset_score").click(() => { $("#prefs").slideUp(), $("#prefbut").removeClass("open"), $.get("q.php?reset_score=1", function () { GAME.Q = null; if (GAME.Started) GAME.load_question() }); return false });
-		$("#prefform .reset_tut").click(() => { $("#prefs").slideUp(), $("#prefbut").removeClass("open"), tutorials_reset(), GAME.Start(); return false });
+		$("#prefform .apply").click(() => { this.Close_Menu(); if (GAME.Started) GAME.NextQuestion(); return false })
+		$("#prefform .reset_seen").click(() => { this.Close_Menu(), $.get("q.php?reset_seen=1&reset_score=1", ()=>GAME.NextQuestion() ); return false });
+		$("#prefform .reset_score").click(() => { this.Close_Menu(), $.get("q.php?reset_score=1", ()=>GAME.NextQuestion() ); return false });
+		$("#prefform .reset_tut").click(() => { this.Close_Menu(), tutorials_reset(), GAME.Start(); return false });
 
 		$("#start").click(() => { GAME.Start(); return false })
-		$("#next").click(() => { GAME.load_question(); return false })
+		$("#next").click(() => { GAME.NextQuestion(null,false,true); return false })
 		$("#play").click(() => { GAME.StartAudio(); $('#input').focus(); return false })
 		$("#pause").click(() => { GAME.Audio.player.pause(); $('#input').focus(); return false })
 
@@ -61,8 +66,8 @@ class UI_CGA {
 		this.update_pref_all()
 	}
 	// called by GAME: when number of matched questions changes
-	OnMatchedChanged(match) {
-		$("#prefmatch").html("Matching questions: " + match)
+	OnMatchedChanged(match,unseen) {
+		$("#prefmatch").html(Template($("#prefmatch").data("template"),{match:match,unseen:unseen}))
 	}
 
 	// called by GAME: when engine starts loading the next question
@@ -471,4 +476,11 @@ class UI_CGA {
 	OnError(err) {
 		this.ShowMessage("error", err)
 	}
+}
+
+function Template(s,vars) {
+	var regexp = /{([^{]+)}/g;
+	return s.replace(regexp, function(_, key){
+				return (key = vars[key]) == null ? '' : key;
+	});
 }
