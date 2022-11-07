@@ -13,21 +13,21 @@
 		</h2>
 
 		<div id="prefs">
-			<p class="caption">Select your old gaming platform(s):</p>
+			<p class="caption">Select your gaming platform(s):</p>
 			<form id="prefform">
 				<div class="platforms">
 				<?php foreach ($PLATFORMS as $pf=>$pfl):?>
 					<div class="plat"><label for='pf_<?=$pf?>'><input type="checkbox" id="pf_<?=$pf?>" name=<?=$pf=="all"?'"pfall_discard"':'pf[]'?> value="<?=$pf?>" class="platcb cga-checkbox"></label></td><td><label for='pf_<?=$pf?>'><?=$pfl?></label></div>
 				<?php endforeach; ?>
 				</div>
-				<div id="prefmatch"></div>
+				<div id="prefmatch" data-template="Questions:<br>Selected - {match}<br>Unseen - {unseen}"></div>
 				<a href="#" class="cyanbut apply">apply</a>
 				<br>
 				
 				<div class="resets">
-					<a href="#" class="cyanbut reset_seen">reset seen</a>
-					<a href="#" class="cyanbut reset_score">reset score</a>
-					<a href="#" class="cyanbut reset_tut">reset tutorials</a>
+					<div class="resetline"><a href="#" class="cyanbut reset_seen">new game</a><div class="resetdesc"></div></div>
+					<div class="resetline"><a href="#" class="cyanbut reset_score">new game +</a><div class="resetdesc">Retry skipped questions, but keep your score.</div></div>
+					<div class="resetline"><a href="#" class="cyanbut reset_tut">reset tutorials</a><div class="resetdesc"></div></div>
 				</div>
 			</form>
 		</div>

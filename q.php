@@ -9,6 +9,7 @@ session_id("rtg"); session_start();
 
 settype($_SESSION['seen'],"array");
 settype($_SESSION['guessed'],"array");
+
 settype($_REQUEST['seen'],"int");
 settype($_REQUEST['guessed'],"int");
 settype($_REQUEST['q'],"int");
@@ -24,6 +25,8 @@ if (isset($_REQUEST['pf'])) {
 	$_SESSION['prefs']=(array)$_REQUEST['pf'];
 	unset($_SESSION['matched']);
 }
+
+$do_shuffle = $_REQUEST['shuffle'];
 
 if (!isset($_SESSION['matched'])) {
 	// load matching questions
@@ -73,29 +76,28 @@ if (!isset($_SESSION['matched'])) {
 	}
 
 	$_SESSION['matched']=array_column($questions,'num');
+	$do_shuffle=true;
 }
 
-// throw away seen
-$unseen = array_filter($_SESSION['matched'], function ($qn) {
-	return (!in_array($qn, $_SESSION['seen']) // num wasn't seen
-	);
-});
+if ($do_shuffle)
+	shuffle($_SESSION['matched']);
 
-// pick a specific question
+// throw away seen
+$unseen = array_values(array_diff($_SESSION['matched'],$_SESSION['seen']));
+
+
 if ($_REQUEST['q']) {
+	// pick a specific question, seen or not
 	$qnum = $_REQUEST['q'];
 } else {
 	// pick from unseen
-	if (count($unseen)) {
-		$qnum = $unseen[array_rand($unseen)];
-	} else {
-		$qnum=0;
-	}
+	$qnum = $unseen[0];
 }
+
 try {
 	$Q = Q::load_question_num($qnum); // =================================================
 } catch (Exception $err) {
-
+	die(json_encode(['err'=>$err->getMessage()]));
 }
 
 
@@ -105,9 +107,10 @@ try {
 
 $RET['total'] = $_SESSION['total'];
 $RET['match'] = count($_SESSION['matched']);
-$RET['match_raw'] = $_SESSION['matched'];
+$RET['match_arr'] = $_SESSION['matched']; // debug
 $RET['unseen'] = count($unseen);
 $RET['seen'] = count($_SESSION['seen']);
+$RET['seen_arr'] = $_SESSION['seen'];
 $RET['totalscore']=count($_SESSION['guessed']);
 $RET['guessed_arr']=$_SESSION['guessed'];
 $RET['score_arr']=array_intersect($_SESSION['guessed'],$_SESSION['matched']);
