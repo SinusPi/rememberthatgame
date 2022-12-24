@@ -1,8 +1,4 @@
 <?php
-$CFG['db_name']="lichoart_rtg";
-$CFG['db_user']="lichoart_rtg";
-$CFG['db_pass']="X0fRD1rY5w";
-
 $PLATFORMS = ['all'=>"All", 'ZX'=>"ZX Spectrum",'Atari'=>"Atari",'C64'=>"C-64",'Amiga'=>"Amiga",'ST'=>"Atari ST",'PC'=>"PC",'NES'=>"NES, SNES",'PSX'=>"PlayStation",'Arcade'=>"Arcade"];
 
 $SETS = [
