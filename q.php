@@ -1,5 +1,6 @@
 <?php
 require("q.class.php");
+Q::$ONLY_TYPE="mp3";
 
 ini_set("DISPLAY_ERRORS", 1);
 //include("config.inc.php");
@@ -36,8 +37,8 @@ if (!isset($_SESSION['matched'])) {
 	$questions = [];
 	foreach ($fs as $f) {
 		try {
-			$q = Q::read_q($f)->getValues();
-			$questions[]=$q;
+			$q_obj = Q::read_q($f);
+			if ($q_obj) $questions[]=$q_obj->getValues();
 		} catch (Exception $e) {
 			header("X-rtg-q-error: ".$f." ".$e->getMessage(),false);
 		}

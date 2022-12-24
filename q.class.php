@@ -5,6 +5,8 @@ class Q implements ArrayAccess {
 
 	private $container = array();
 
+	static $ONLY_TYPE;
+
 	function offsetSet($offset,$value):void {
         if (is_null($offset)) {
             $this->container[] = $value;
@@ -60,6 +62,7 @@ class Q implements ArrayAccess {
 			}
 		}
 		if (!$q['type']) throw new Exception("No data file found for $qfilename.");
+		if (self::$ONLY_TYPE && self::$ONLY_TYPE!=$q['type']) return false;
 	
 		// if it's JSON, use it and bail.
 		$qfile = file_get_contents($qfilename);
