@@ -3,6 +3,8 @@ require("q.class.php");
 Q::$ONLY_TYPE="mp3";
 
 ini_set("DISPLAY_ERRORS", 1);
+header("Content-type: application/json");
+
 //include("config.inc.php");
 //$db = mysqli_connect(null,$CFG['db_user'],$CFG['db_pass'],$CFG['db_name']);
 
@@ -121,8 +123,6 @@ $RET['prefs']=(array)$_SESSION['prefs'];
 $RET['err'] = $err ? $err->getMessage() : null;
 $RET['q']=$Q ? $Q->getValues() : null;
 
-
-header("Content-type: application/json");
 die(json_encode($RET));
 
 
