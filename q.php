@@ -9,13 +9,7 @@ header("Content-type: application/json");
 //$db = mysqli_connect(null,$CFG['db_user'],$CFG['db_pass'],$CFG['db_name']);
 
 session_id("rtg"); session_start();
-
-settype($_SESSION['seen'],"array");
-settype($_SESSION['guessed'],"array");
-
-settype($_REQUEST['seen'],"int");
-settype($_REQUEST['guessed'],"int");
-settype($_REQUEST['q'],"int");
+if (isset($_REQUEST['reset_all'])) $_SESSION=[];
 
 if (isset($_REQUEST['reset_seen'])) unset($_SESSION['seen']);
 elseif ($_REQUEST['seen']) mark_seen($_REQUEST['seen']);
@@ -25,11 +19,28 @@ elseif ($_REQUEST['guessed'] && !in_array($_REQUEST['guessed'],$_SESSION['guesse
 
 if (isset($_REQUEST['pf'])) {
 	if ($_REQUEST['pf'][0]=="all") $_REQUEST['pf']=[];
-	$_SESSION['prefs']=(array)$_REQUEST['pf'];
+	$_SESSION['prefs']['pf']=(array)$_REQUEST['pf'];
+	unset($_SESSION['matched']);
+}
+if ($_REQUEST['do']=="prefs") {
+	$_SESSION['prefs']['set']=$_REQUEST['set'];
 	unset($_SESSION['matched']);
 }
 
+settype($_SESSION['seen'],"array");
+settype($_SESSION['guessed'],"array");
+
+settype($_REQUEST['seen'],"int");
+settype($_REQUEST['guessed'],"int");
+settype($_REQUEST['q'],"int");
+
 $do_shuffle = $_REQUEST['shuffle'];
+
+$SETS = [['slug'=>"all",'label'=>"all",'description'=>"all",'cond'=>function($q) { return true; }]]; //default
+require("config.inc.php");
+$SETS_SLUGS = array_reduce($SETS,function($ss,$set) { $ss[$set['slug']]=$set; return $ss; },[]);
+$SET = $SETS_SLUGS[$_SESSION['prefs']['set'] ?: "all"];
+if (!$SET) die(json_encode(['err'=>"No set selected"]));
 
 if (!isset($_SESSION['matched'])) {
 	// load matching questions
@@ -48,7 +59,7 @@ if (!isset($_SESSION['matched'])) {
 
 	$_SESSION['total'] = count($questions);
 
-	$settings = @json_decode(file_get_contents("data/settings.json"),true);
+	$settings = @json_decode(@file_get_contents("data/settings.json"),true);
 	if ($settings) {
 		foreach ($settings['sets'] as &$set) {
 			if ($set['type']=="max-in-set") {
@@ -60,9 +71,12 @@ if (!isset($_SESSION['matched'])) {
 	}
 
 	// throw away mismatched
-	$questions = array_filter($questions, function ($q) {
+	$questions = array_filter($questions, function ($q) use ($SET) {
 		return ($q
-			&& (empty($_SESSION['prefs']) || count(array_intersect($q['pf'], $_SESSION['prefs'])) > 0) // at least one pf_y is present in pf
+			&& (
+				($SET && $SET['cond']($q))
+				||
+				(empty($_SESSION['prefs']) || count(array_intersect($q['pf'], $_SESSION['prefs'])) > 0)) // at least one pf_y is present in pf
 			//&& (!empty($pf_n) || count(array_intersect($q['pf'], $pf_n)) != count($q['pf'])) // not all of pf is in pf_n
 		);
 	});
@@ -98,7 +112,7 @@ if ($_REQUEST['q']) {
 }
 
 try {
-	$Q = Q::load_question_num($qnum); // =================================================
+	if ($qnum) $Q = Q::load_question_num($qnum); // =================================================
 } catch (Exception $err) {
 	die(json_encode(['err'=>$err->getMessage()]));
 }
@@ -120,6 +134,7 @@ $RET['score_arr']=array_intersect($_SESSION['guessed'],$_SESSION['matched']);
 $RET['score']=count($RET['score_arr']);
 //$RET['set_arr']=$_SESSION['matched'];
 $RET['prefs']=(array)$_SESSION['prefs'];
+$RET['set'] = $SET;
 $RET['err'] = $err ? $err->getMessage() : null;
 $RET['q']=$Q ? $Q->getValues() : null;
 
