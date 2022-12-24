@@ -32,6 +32,7 @@ class UI_CGA {
 
 		$("[data-onclick=start]").click(_=>{ GAME.NextQuestion(); return false })
 		$("[data-onclick=show_selection]").click(_=>{ this.Go("selection"); return false })
+		$("[data-onclick=startset]").click(function(e) { this_ui.Route("start="+$(this).data("set")); return false })
 		$("[data-onclick=next]").click(e=>{ GAME.NextQuestion(null,false,true); e.preventDefault(); return false })
 		$("[data-onclick=play]").click(_=>{ GAME.StartAudio().then(_=>$('#input').focus()); return false })
 		$("[data-onclick=pause]").click(_=>{ GAME.Audio.player.pause(); $('#input').focus(); return false })

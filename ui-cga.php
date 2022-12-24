@@ -54,7 +54,7 @@
 				<h2>Pick a set:</h2>
 				<div id="select-set">
 					<?php foreach ($SETS as $set):?>
-						<a class="set hash" href="start=<?=$set['slug']?>">
+						<a class="set hash" href="" data-onclick="startset" data-set="<?=$set['slug']?>">
 							<div class="label"><?=$set['label']?></div>
 							<div class="description"><?=$set['description']?></div>
 						</a>
