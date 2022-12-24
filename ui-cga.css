@@ -40,6 +40,19 @@ body {
   flex: 1 1 auto;
   align-self: auto;
   width: 25%;
+  border: 2px solid cyan;
+  height: 10em;
+}
+#maincontainer #scorepane .section {
+  margin-bottom: 0.2em;
+}
+#maincontainer #scorepane .head {
+  text-align: left;
+  font-size: 0.6em;
+  color: cyan;
+}
+#maincontainer #scorepane .label.set {
+  font-size: 0.8em;
 }
 #maincontainer #scorepane .remaining {
   margin-top: 0.4em;
@@ -112,7 +125,6 @@ body {
   text-align: left;
   width: 15em;
   margin: auto;
-  padding-right: 68px;
 }
 #maincontainer #questionpane #questions table {
   width: 100%;
@@ -159,14 +171,18 @@ h2#title {
   filter: brightness(100%);
 }
 
-#gt {
+#qform {
+  width: 15em;
+  margin: auto;
+  text-align: left;
+}
+#qform img#gt {
   width: 64px;
   height: 64px;
   top: 12px;
   position: relative;
 }
-
-#input {
+#qform #input {
   font: 1rem "vcr_osd_monoregular";
   padding: 0.2em 0.3em 0.2em 0.3em;
   background: black;
@@ -174,10 +190,11 @@ h2#title {
   color: white;
   caret-color: cyan;
   margin-left: 4px;
+  width: 11.5em;
 }
-
-#ok {
+#qform #ok {
   width: 5em;
+  font-size: 1.2em;
   cursor: pointer;
 }
 
@@ -185,6 +202,11 @@ h2#title {
 a:focus,
 .cyanbut:hover {
   outline: 3px solid magenta;
+}
+
+.cyanbut:active {
+  padding: 4px 18px 0px 22px;
+  box-shadow: inset 2px 2px 0px black;
 }
 
 a,
@@ -226,8 +248,46 @@ img {
 
 #messages {
   font-size: 0.7em;
-  width: 15em;
   margin: auto;
+}
+#messages [data-message=intro] .cyanbut#start {
+  width: 400px;
+  height: 48px;
+  font-size: 1.8em;
+}
+#messages [data-message=selection] h2 {
+  margin-bottom: 1em;
+  font-size: 1.2em;
+}
+#messages [data-message=selection] #select-set {
+  width: 24em;
+  height: 20em;
+  overflow-y: scroll;
+  margin: auto;
+}
+#messages [data-message=selection] #select-set a.set {
+  display: block;
+  margin-bottom: 0.2em;
+  text-decoration: none;
+  padding: 0.2em;
+  margin: 4px auto;
+  width: 95%;
+}
+#messages [data-message=selection] #select-set a.set:hover {
+  outline: 3px solid magenta;
+}
+#messages [data-message=selection] #select-set a.set .label {
+  margin-bottom: 0.1em;
+}
+#messages [data-message=selection] #select-set a.set .description {
+  font-size: 14px;
+}
+#messages h2 {
+  margin-bottom: 2em;
+}
+#messages p {
+  width: 15em;
+  margin: 0 auto 0.5em auto;
 }
 #messages [data-message] {
   display: none;
@@ -263,8 +323,12 @@ img {
 }
 #prefs .resets {
   display: flex;
+  justify-content: space-evenly;
   max-width: 30em;
-  margin: auto;
+  margin: 1em auto;
+}
+#prefs .resets .resetdesc {
+  font-size: 0.5em;
 }
 
 input.cga-checkbox {
@@ -302,13 +366,6 @@ a.cyanbut {
   display: none;
 }
 
-#qform {
-  width: 15em;
-  margin: auto;
-  padding-right: 68px;
-  text-align: left;
-}
-
 .tutorial {
   font-size: 0.5em;
   position: relative;
@@ -336,4 +393,8 @@ a.cyanbut {
   font-size: 0.5em;
 }
 
-/*# sourceMappingURL=style.css.map */
+#footer {
+  margin-top: 2em;
+}
+
+/*# sourceMappingURL=ui-cga.css.map */
