@@ -99,8 +99,10 @@
 								<div id="custom-handle" class="ui-slider-handle"></div>
 							</div>
 							<div id="control">
-								<img id="play" class="playpause" src="img/but-play.gif" data-onclick="play">
-								<img id="pause" class="playpause" src="img/but-pause.gif" data-onclick="pause">
+								<a id="play" href="#" data-onclick="play" class="cyanbut playpause">&#x25b6;&#xfe0e;</a>
+								<a id="pause" href="#" data-onclick="pause" class="cyanbut playpause">&#x23f8;&#xfe0e;</a>
+								<!img id="play" class="playpause" src="img/but-play.gif" data-onclick="play">
+								<!img id="pause" class="playpause" src="img/but-pause.gif" data-onclick="pause">
 							</div>
 							<!--
 								<button onclick="Player.volume+=0.1">Vol +</button>
