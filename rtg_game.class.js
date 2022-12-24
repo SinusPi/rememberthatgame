@@ -5,59 +5,77 @@ class RTG_GAME {
 	Prefs = {}
 	Audio = {}
 
-	Init() {
-		this.SetupHistory()
+	async Init() {
+		console.log("GAME powering up: UI...")
+		this.SetupUI() // first this, to be able to display errors
+		console.log("GAME powering up: audio...")
 		this.SetupAudio()
-		this.InitPrefs(() => this.OnInited())
+		console.log("GAME loading preferences...")
+		await this.LoadPreferences()
+		this.OnInited()
 	}
 
-	InitPrefs(done) {
-		let this_game = this
-		$.get("q.php?init", function (data) {
-			console.log("init", data)
-			this_game.get_status_from_response(data)
-			done()
+	async LoadPreferences() {
+		return new Promise(resolve=>{
+			return this.API({"do":"init"}, data => {
+				console.log("GAME initing")
+				this.get_status_from_response(data)
+				resolve()
+			})
 		})
+	}
+
+	SetupUI() {
+		this.UI.Init(this)
 	}
 
 	OnInited() {
-		this.UI.Init()
-
-		if (INIT_NUM) this.Start()
-	}
-
-	SetupHistory() {
-		window.addEventListener('popstate', (event) => {
-			if (event.state && event.state.q) this.NextQuestion(event.state.q, true, false);
-		})
+		this.UI.OnReady()
 	}
 
 	SetupAudio() {
-		this.Audio.player = $("#audio")[0]
+		let Audio = this.Audio
+		Audio.player = $("#audio")[0]
 
+		console.groupCollapsed("Game/audio initing...")
 		// analyser stuff
 		var AudioContext = window.AudioContext || window.webkitAudioContext;
-		this.Audio.context = new AudioContext()
-		console.log("AudioContext created", this.Audio.context)
+		Audio.context = new AudioContext()
+		console.log("AudioContext created",Audio.context)
+
+		Audio.analyser = Audio.context.createAnalyser()
+		Audio.analyser.fftSize = 2048
+		console.log("Spectrum Analyser created", Audio.analyser)
+
+		// connect the stuff up to eachother
+		Audio.source = Audio.context.createMediaElementSource(Audio.player)
+		Audio.source.connect(Audio.analyser);
+		Audio.analyser.connect(Audio.context.destination);
+		console.log("All connected.")
+		console.groupEnd()
+		console.log("Game/audio inited. ✔")
+
+
+		this.UI.OnAudioReady()
 	}
 
-	StartAudio() {
-		try {
-			console.log("resuming")
+	async StartAudio() {
+		return new Promise(resolve=>{
+			console.log("Audio: resuming context")
 			this.Audio.context.resume();
-			console.log("starting")
-			this.Audio.player.play().catch((e) => {
+			console.log("Audio: starting player")
+			this.Audio.player.play()
+			.then(resolve)
+			.catch((e) => {
 				if ((e instanceof DOMException) && e.toString().match(/user didn't interact/)) {
-					console.log("GAME.StartAudio failed to autoplay; fallback to request interaction")
-					this.UI.OnGameAutoplayFailed()
+					console.warn("GAME.StartAudio failed to autoplay; fallback to request interaction")
+					this.UI.OnAudioAutoplayFailed()
 				} else {
 					console.error("failed to play", e)
-					GAME.OnError("failed to play:" + e)
+					this.OnError("failed to play:" + e)
 				}
 			})
-		} catch (e) {
-			console.error(e);
-		}
+		})
 	}
 
 	location_raw() {
@@ -66,12 +84,6 @@ class RTG_GAME {
 
 	OnError(msg) {
 		this.UI.OnError(msg)
-	}
-
-	Start() {
-		this.UI.OnStart && this.UI.OnStart()
-		this.NextQuestion(INIT_NUM, true, false)
-		this.Started = true
 	}
 
 	registerUI(UI) {
@@ -95,13 +107,14 @@ class RTG_GAME {
 		}
 	}
 
-	SavePrefs(prefs) {
+	SavePrefs(prefs,callback) {
 		console.log("GAME.SavePrefs", prefs)
 		this.prefs = prefs
-		let this_game = this
-		$.get("q.php?" + prefs.map(s => `pf[]=${s}`).join("&"), function (data) {
+		prefs = {do:"prefs",...prefs}
+		this.API(prefs, data => {
 			console.log("prefs saved:", data)
-			this_game.get_status_from_response(data)
+			this.get_status_from_response(data)
+			callback?.()
 		})
 	}
 
@@ -109,20 +122,17 @@ class RTG_GAME {
 	NextQuestion(num = null, dontpush = false, skip = false) {
 		this.Audio.player.pause()
 		this.UI.OnQuestionLoading()
-		let this_game = this
-		$.get({
-			url: "q.php?do=q"
-				+ (num ? "&q=" + num : "") // load specific q
-				//+ "&" + urialize(this.Prefs) // save prefs
-				+ ((this.Q && this.Q.num && skip) ? "&seen=" + this.Q.num : ""), //mark Q seen
-			success: function (data, status, jqhxr) {
-				console.log("q.php sends data:", data)
-				this_game.OnQuestionReceived(data, dontpush)
+		let query = {"do":"q"} 
+		if (num) query.q=num // load specific q
+		//+ "&" + urialize(this.Prefs) // save prefs
+		if (this.Q && this.Q.num && skip) query.seen=this.Q.num //mark Q seen
+		console.log("NextQuestion",num,dontpush,query)
+		this.API(query,
+			data => {
+				
+				this.OnQuestionReceived(data, dontpush)
 			},
-			error: function () {
-				console.log("ERROR")
-			}
-		})
+		)
 	}
 
 	OnQuestionReceived(data, dontpush) {
@@ -147,8 +157,9 @@ class RTG_GAME {
 		console.log("Loaded and verified question " + q.num)
 
 		if (!dontpush) {
-			history.pushState({ q: q.num }, "Remember That Game? Question #" + q.num, this.location_raw() + "/" + q.num)
-			console.log("pushed state " + q.num)
+			//history.pushState({ q: q.num }, "Remember That Game? Question #" + q.num, this.location_raw() + "/" + q.num)
+			//$.history.push("q="+q.num)
+			//console.log("pushed state " + q.num)
 		}
 
 		this.Q = q
@@ -174,32 +185,47 @@ class RTG_GAME {
 	}
 
 	OnAnswer(guess) {
-		let m = 0
-		for (let s in this.Q.scores) {
+		let max_sc = 0
+		for (let s=0;s<this.Q.scores.length;s++) {
 			let score = this.Q.scores[s]
 			if (guess.match(score.re)) {
-				if (s+1 > m) {
-					m = (s+1)
+				if (s+1 > max_sc) {
+					max_sc = (s+1)
 				}
 			}
 		}
-		if (m > 0) {
-			console.log("GOOD:", guess, "num", m)
-			for (let i = 1; i <= m; i++)
-				this.UI.ShowCorrect && this.UI.ShowCorrect(i) // all correct up to current
+		if (max_sc > 0) {
+			console.log("GOOD:", guess, "num", max_sc)
+			for (let i = 1; i <= max_sc; i++)
+				this.UI.ShowCorrect?.(i) // all correct up to current
 			return true
 		} else {
 			console.log("BAD: ", guess)
-			this.UI.ShowIncorrect && this.UI.ShowIncorrect(guess)
+			this.UI.ShowIncorrect?.(guess)
 			return false
 		}
 	}
 
 	SaveGuessed(num = null) {
-		let this_game = this
-		$.get("q.php?guessed=" + (num || this.Q.num), function (data) {
+		this.API({guessed:(num || this.Q.num)}, data => {
 			console.log("saved guessed:", data)
-			this_game.get_status_from_response(data)
+			this.get_status_from_response(data)
 		})
+	}
+
+	Reset(what,callback) {
+		let fields={}
+		for (let field in what) fields["reset_"+field]=1
+		this.API(fields,callback)
+	}
+
+	API(query,callback) {
+		if (typeof query == "object") query = new URLSearchParams(query).toString()
+		return $.get("q.php?"+query, (data,status,xhr)=>{
+			if (!data) return this.OnError()
+			if (data.err) return this.OnError(data.err)
+			console.log("q.php called as '%s', sends data:",query, data)
+			callback(data)
+		}).fail(_=>this.OnError())
 	}
 }

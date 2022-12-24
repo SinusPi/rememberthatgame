@@ -1,27 +1,28 @@
 <?php
-define ("DO_FACEBOOK",true);
+define ("DO_FACEBOOK",false);
 
 define ("UI","cga");
 
-session_id("rtg"); session_start();
+require("config.inc.php");
 
-$PLATFORMS = ['all'=>"All", 'ZX'=>"ZX Spectrum",'Atari'=>"Atari",'C64'=>"C-64",'Amiga'=>"Amiga",'ST'=>"Atari ST",'PC'=>"PC",'NES'=>"NES, SNES",'PSX'=>"PlayStation",'Arcade'=>"Arcade"];
+session_id("rtg"); session_start();
 
 if (strpos($_SERVER['HTTP_USER_AGENT'],"Firefox")!==FALSE) $htmlclass="ua-ff";
 ?>
 <html class="<?=$htmlclass?>">
 
 <head>
-	<title>Remember That Game?</title>
-	<link rel="stylesheet" href="style.css">
+	<title>Your Game Sounds Familiar</title>
+	<link rel="stylesheet" href="ui-<?=UI?>.css">
 	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 	<script src="jquery-ui.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/gh/yeikos/jquery.history/jquery.history.min.js"></script>
 	<meta property="fb:app_id" content="2505132236168934">
 	<meta property="og:url"           content="http://djab.eu/remember-that-game" />
   	<meta property="og:type"          content="website" />
-  	<meta property="og:title"         content="Remember That Game?" />
-  	<meta property="og:description"   content="How many retro games can you recognize by music or by a piece of graphics?" />
+  	<meta property="og:title"         content="Your Game Sounds Familiar" />
+  	<meta property="og:description"   content="How many retro games can you recognize by music?" />
   	<meta property="og:image"         content="http://djab.eu/remember-that-game/img/but-play.gif" />
 
 <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -38,7 +39,16 @@ if (strpos($_SERVER['HTTP_USER_AGENT'],"Firefox")!==FALSE) $htmlclass="ua-ff";
 		<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v6.0&appId=2505132236168934&autoLogAppEvents=1"></script>
 	<?php endif; ?>
 
-	<?php include("ui-".UI.".php"); ?>
+
+	<?php require("ui-".UI.".php"); ?>
+	<script src="rtg_game.class.js"></script>
+	<script>
+	$(() => {
+		var GAME = new RTG_GAME()
+		if (UI) GAME.registerUI(UI)
+		GAME.Init()
+	})
+	</script>
 
 	<script>
 		function urialize(obj) {
@@ -67,15 +77,6 @@ if (strpos($_SERVER['HTTP_USER_AGENT'],"Firefox")!==FALSE) $htmlclass="ua-ff";
 		var INIT_NUM = <?=intval($_REQUEST['q'])?>||null
 	</script>
 
-	<script src="rtg_game.class.js"></script>
-	<script>
-	var GAME = new RTG_GAME()
-	if (UI) GAME.registerUI(UI)
-	</script>
-
-	<script>
-	</script>
-	
 	<script>
 		var oldTime = 0
 
@@ -128,10 +129,6 @@ if (strpos($_SERVER['HTTP_USER_AGENT'],"Firefox")!==FALSE) $htmlclass="ua-ff";
 			$(".tristate").change()
 		}
 		*/
-
-		$(() => {
-			GAME.Init()
-		})
 
 	</script>
 </body>

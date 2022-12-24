@@ -1,6 +1,6 @@
 <div id="container" style="display:none;">
 		<h2 id="title">
-			<a class='titlelink' href="index.php">Your Game Sounds Familiar!</a>
+			<a class='titlelink' href="index.php"></a>
 			<a href="#" id="prefbut">
 				<svg width="100%" height="100%" viewBox="0 0 50 50"  preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
 					<g id="Layer_1">
@@ -13,32 +13,55 @@
 		</h2>
 
 		<div id="prefs">
-			<p class="caption">Select your gaming platform(s):</p>
 			<form id="prefform">
+				<?php /*
 				<div class="platforms">
 				<?php foreach ($PLATFORMS as $pf=>$pfl):?>
 					<div class="plat"><label for='pf_<?=$pf?>'><input type="checkbox" id="pf_<?=$pf?>" name=<?=$pf=="all"?'"pfall_discard"':'pf[]'?> value="<?=$pf?>" class="platcb cga-checkbox"></label></td><td><label for='pf_<?=$pf?>'><?=$pfl?></label></div>
 				<?php endforeach; ?>
 				</div>
-				<div id="prefmatch" data-template="Questions:<br>Selected - {match}<br>Unseen - {unseen}"></div>
 				<a href="#" class="cyanbut apply">apply</a>
-				<br>
-				
+				*/ ?>
 				<div class="resets">
-					<div class="resetline"><a href="#" class="cyanbut reset_seen">new game</a><div class="resetdesc"></div></div>
-					<div class="resetline"><a href="#" class="cyanbut reset_score">new game +</a><div class="resetdesc">Retry skipped questions, but keep your score.</div></div>
-					<div class="resetline"><a href="#" class="cyanbut reset_tut">reset tutorials</a><div class="resetdesc"></div></div>
+					<div class="resetline"><a href="#" class="cyanbut" data-onclick="new_set">new game</a><div class="resetdesc">Play another set.<br>Your scores are saved.</div></div>
+					<div class="resetline"><a href="#" class="cyanbut" data-onclick="reset_seen">restart</a><div class="resetdesc">Retry skipped questions.</div></div>
+					<div class="resetline"><a href="#" class="cyanbut" data-onclick="reset_all">reset game</a><div class="resetdesc">Reset all your scores.</div></div>
 				</div>
+				<?php /*
+				<div class="resets">
+					<div class="resetline"><a href="#" class="cyanbut" data-onclick="reset_tut">reset tutorials</a><div class="resetdesc"></div></div>
+				</div>
+				*/ ?>
 			</form>
 		</div>
 
 		<div id="messages">
+
 			<div data-message="intro">
-				<p>How well do you remember those old games?</p>
-				<p>Relive the nostalgia and try to guess the game by music or graphics.</p>
-				<p>Correct guesses will, in some cases, be rewarded with various interesting tidbits about the game.</p>
-				<p>Use the menu button to select your favourite game platforms.</p>
+				<div class="logo">
+					<img src="img/title.gif" width=800 alt="Your Game Sounds Familiar"/>
+				</div>
+				<h2>- The Game Music Quiz -</h2>
+
+				<p><a class="cyanbut hash" id="start" href="selection">START</a></p>
 			</div>
+
+			<div data-message="selection">
+				<div class="logo-mini">
+					<img src="img/title.gif" width=400 alt="Your Game Sounds Familiar"/>
+				</div>
+				
+				<h2>Pick a set:</h2>
+				<div id="select-set">
+					<?php foreach ($SETS as $set):?>
+						<a class="set hash" href="start=<?=$set['slug']?>">
+							<div class="label"><?=$set['label']?></div>
+							<div class="description"><?=$set['description']?></div>
+						</a>
+					<?php endforeach; ?>
+				</div>
+			</div>
+
 			<div data-message="about">
 				<p>Remember That Game? is a quiz for gamers, in which you'll have to guess game titles by fragments of their music, sound effects, bits of graphics or trivia.</p>
 				<p>Correct guesses will, in some cases, be rewarded with various interesting tidbits about the game.</p>
@@ -51,10 +74,10 @@
 			</div>
 			<div data-message="error">
 				<p>Oops.</p>
-				<p>Something isn't working right. Please reload me.</p>
+				<p>The game has crashed!</p>
+				<p data-var="error"></p>
 			</div>
 		</div>
-		<p><a class="cyanbut" id="start" href="#">START</a></p>
 		
 		<div id="footer">
 			<p class="small">
@@ -76,8 +99,8 @@
 								<div id="custom-handle" class="ui-slider-handle"></div>
 							</div>
 							<div id="control">
-								<img id="play" class="playpause" src="img/but-play.gif">
-								<img id="pause" class="playpause" src="img/but-pause.gif">
+								<img id="play" class="playpause" src="img/but-play.gif" data-onclick="play">
+								<img id="pause" class="playpause" src="img/but-pause.gif" data-onclick="pause">
 							</div>
 							<!--
 								<button onclick="Player.volume+=0.1">Vol +</button>
@@ -89,11 +112,11 @@
 						</div>
 					</div>
 					<div id="questions"></div>
-					<form id="qform"><img id="gt" src="img/gt-c.gif"><input id="input" type="text"><a id="ok" class="cyanbut">OK</a></form>
+					<form id="qform"><img id="gt" src="img/gt-c.gif"><input id="input" type="text"><a id="ok" class="cyanbut" data-onclick="guess">GUESS</a></form>
 					<h2 id='correct1'>Correct!</h2>
 					<h1 id='correct2'></h1>
 					<div id='correct3'></div>
-					<p><a id="next" class="cyanbut" href="#">NEXT</a></p>
+					<p><a id="next" class="cyanbut" href="#" data-onclick="next">NEXT</a></p>
 					<div class="tutorial" data-tutfor="next">Skip: Move on to the next question.</div>
 					<!--
 						<p><a id="hint" class="cyanbut" href="#" onclick="next_hint(); return false">SHOW ANSWER</a></p>
@@ -109,17 +132,21 @@
 				</div>
 			</div>
 			<div id="scorepane">
-				<div id="scorep">Score: <span class="score">0</span></div>
-				<div class="remaining"></div>
+				<div class="section">
+					<div class="head set">Set</div>
+					<div class="label set" data-template="{set-label}"></div>
+				</div>
+				<div class="section">
+					<div class="head score">Score</div>
+					<div class="label score" data-template="{score}">0</span></div>
+					<div class="remaining" data-template="(remaining: {unseen} of {match})"></div>
+				</div>
 			</div>
 		</div>
 		<br>&nbsp;
 	</div>
 
 	<script src="ui-cga.class.js"></script>
-	<script>
-		var UI = new UI_CGA()
-	</script>
 
 <template data-name="question">
 	<table>
