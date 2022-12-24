@@ -37,12 +37,12 @@ body {
     order: 3;
     flex: 1 1 auto;
     align-self: auto;
-	width: 25%;
-	
-	.remaining {
-		margin-top:0.4em;
-		font-size:0.7em;
-	}
+    width: 25%;
+
+    .remaining {
+      margin-top: 0.4em;
+      font-size: 0.7em;
+    }
   }
 
   #questionpane {
@@ -99,8 +99,8 @@ body {
             height: 2em;
             position: absolute;
             left: 0;
-			top: 0;
-			cursor:pointer;
+            top: 0;
+            cursor: pointer;
           }
         }
       }
@@ -165,10 +165,11 @@ h2#title {
   margin-right: 6px;
   display: none;
   text-decoration: none;
-  width:0.8em; height:0.8em;
+  width: 0.8em;
+  height: 0.8em;
 
   &.open {
-    filter:brightness(100%);
+    filter: brightness(100%);
   }
 }
 
@@ -188,7 +189,8 @@ h2#title {
   margin-left: 4px;
 }
 #ok {
-  width:5em; cursor:pointer;
+  width: 5em;
+  cursor: pointer;
 }
 #input:focus,
 a:focus,
@@ -232,22 +234,37 @@ img {
 
 #messages {
   font-size: 0.7em;
-  width: 15em;
   margin: auto;
 
+  [data-message="intro"] {
+    .logo {
+    }
+  }
+
+  .logo-mini {
+  }
+
+  h2 {
+    margin-bottom: 2em;
+  }
+
+  p {
+    width: 15em;
+    margin: 0 auto 0.5em auto;
+  }
+
   [data-message] {
-    display: none;
+    display: none; // at start
   }
 }
 
 #prefs {
-  position:absolute;
-  display:none;
-  width:100%;
-  background:black;
+  position: absolute;
+  display: none;
+  width: 100%;
+  background: black;
   border-bottom: 2px solid white;
-  z-index:20;
-
+  z-index: 20;
 
   #prefform {
     padding-bottom: 8px;
@@ -255,7 +272,7 @@ img {
     bottom: 0px;
 
     .platforms {
-      display:flex;
+      display: flex;
       justify-content: flex-start;
       flex-direction: column;
       flex-wrap: wrap;
@@ -266,19 +283,18 @@ img {
 
       .plat {
         //width:10em;
-        height:1.4em;
-        display:flex;
+        height: 1.4em;
+        display: flex;
         align-items: center;
       }
     }
   }
 
   .resets {
-    display:flex;
-    max-width:30em;
-    margin:auto;
+    display: flex;
+    max-width: 30em;
+    margin: auto;
   }
-  
 }
 
 input.cga-checkbox {
@@ -327,7 +343,7 @@ a.cyanbut {
   position: relative;
   width: 18em;
   margin: auto;
-   border:2px solid magenta;
+  border: 2px solid magenta;
 }
 
 .close.mini {
@@ -339,14 +355,13 @@ a.cyanbut {
 }
 
 #correct3 {
-  font-size:0.5em;
+  font-size: 0.5em;
 
   h3 {
-    font-size:1.5em;
+    font-size: 1.5em;
   }
-  
 }
 
 .small {
-  font-size:0.5em;
+  font-size: 0.5em;
 }
