@@ -25,8 +25,8 @@ class UI_CGA {
 		$("#prefbut").show().click(_=>{ $("#prefs").slideToggle(); $("#prefbut").toggleClass("open"); return false });
 		//$("#prefform .apply").click(_=>{ this.Close_Menu(); if (GAME.Started) GAME.NextQuestion(); return false })
 		$("#prefform [data-onclick=new_set]").click(_=>{ this.Close_Menu(), this.Go(""); return false });
-		$("#prefform [data-onclick=reset_seen]").click(_=>{ this.Close_Menu(), GAME.Reset({seen:1,score:1}, _=>GAME.NextQuestion() ); return false });
-		$("#prefform [data-onclick=reset_score]").click(_=>{ this.Close_Menu(), GAME.Reset({score:1}, _=>GAME.NextQuestion() ); return false });
+		$("#prefform [data-onclick=reset_seen]").click(_=>{ this.Close_Menu(), GAME.Reset({seen:1}, _=>GAME.NextQuestion() ); return false });
+		//$("#prefform [data-onclick=reset_score]").click(_=>{ this.Close_Menu(), GAME.Reset({score:1}, _=>GAME.NextQuestion() ); return false });
 		$("#prefform [data-onclick=reset_tut]").click(_=>{ this.Close_Menu(), tutorials_reset(), GAME.NextQuestion(); return false });
 		$("#prefform [data-onclick=reset_all]").click(_=>{ this.Close_Menu(), GAME.Reset({all:1}, _=>this.Go("") ); return false });
 
@@ -102,6 +102,7 @@ class UI_CGA {
 		console.log("Route:",name,arg)
 		if (name=="" || name=="intro") {
 			this.ShowMessage("intro")
+			this.GAME.Audio.player.pause()
 		} else if (name=="selection") {
 			this.ShowMessage("selection")
 		} else if (name=="start") {
@@ -183,7 +184,7 @@ class UI_CGA {
 
 	// called by GAME: when score data arrives
 	ShowScore(data) {  // use .totalscore, .score, .seen, .match; also .set.*
-		$("#scorepane").fillAllTemplates({...data,"set-label":data.set.label})
+		$("#scorepane").fillAllTemplates({...data,"set-label":data.set.label,"seenplus":data.seen+1})
 		/*
 		$("#scorepane")
 			.find(".score").html(data.score).end()

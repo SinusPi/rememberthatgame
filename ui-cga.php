@@ -137,9 +137,16 @@
 					<div class="label set" data-template="{set-label}"></div>
 				</div>
 				<div class="section">
+					<div class="head question">Question</div>
+					<div class="label question" data-template="{seenplus} of {match}"></div>
+				</div>
+				<div class="section">
 					<div class="head score">Score</div>
 					<div class="label score" data-template="{score}">0</span></div>
-					<div class="remaining" data-template="(remaining: {unseen} of {match})"></div>
+				</div>
+				<div class="section">
+					<div class="head score">Total Score</div>
+					<div class="label score" data-template="{totalscore}">0</span></div>
 				</div>
 			</div>
 		</div>
