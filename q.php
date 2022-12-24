@@ -9,12 +9,18 @@ header("Content-type: application/json");
 //$db = mysqli_connect(null,$CFG['db_user'],$CFG['db_pass'],$CFG['db_name']);
 
 session_id("rtg"); session_start();
+settype($_SESSION['seen'],"array");
+settype($_SESSION['guessed'],"array");
+settype($_REQUEST['seen'],"int");
+settype($_REQUEST['guessed'],"int");
+settype($_REQUEST['q'],"int");
+
 if (isset($_REQUEST['reset_all'])) $_SESSION=[];
 
-if (isset($_REQUEST['reset_seen'])) unset($_SESSION['seen']);
+if (isset($_REQUEST['reset_seen'])) $_SESSION['seen']=[];
 elseif ($_REQUEST['seen']) mark_seen($_REQUEST['seen']);
 
-if ($_REQUEST['reset_score']) unset($_SESSION['guessed']);
+if (isset($_REQUEST['reset_score'])) $_SESSION['guessed']=[];
 elseif ($_REQUEST['guessed'] && !in_array($_REQUEST['guessed'],$_SESSION['guessed'])) $_SESSION['guessed'][] = $_REQUEST['guessed'];
 
 if (isset($_REQUEST['pf'])) {
@@ -27,17 +33,11 @@ if ($_REQUEST['do']=="prefs") {
 	unset($_SESSION['matched']);
 }
 
-settype($_SESSION['seen'],"array");
-settype($_SESSION['guessed'],"array");
-
-settype($_REQUEST['seen'],"int");
-settype($_REQUEST['guessed'],"int");
-settype($_REQUEST['q'],"int");
-
 $do_shuffle = $_REQUEST['shuffle'];
 
 $SETS = [['slug'=>"all",'label'=>"all",'description'=>"all",'cond'=>function($q) { return true; }]]; //default
 require("config.inc.php");
+
 $SETS_SLUGS = array_reduce($SETS,function($ss,$set) { $ss[$set['slug']]=$set; return $ss; },[]);
 $SET = $SETS_SLUGS[$_SESSION['prefs']['set'] ?: "all"];
 if (!$SET) die(json_encode(['err'=>"No set selected"]));
@@ -130,7 +130,7 @@ $RET['seen'] = count($_SESSION['seen']);
 $RET['seen_arr'] = $_SESSION['seen'];
 $RET['totalscore']=count($_SESSION['guessed']);
 $RET['guessed_arr']=$_SESSION['guessed'];
-$RET['score_arr']=array_intersect($_SESSION['guessed'],$_SESSION['matched']);
+$RET['score_arr']=array_intersect($_SESSION['guessed'],$_SESSION['matched']); // score for THIS set
 $RET['score']=count($RET['score_arr']);
 //$RET['set_arr']=$_SESSION['matched'];
 $RET['prefs']=(array)$_SESSION['prefs'];
