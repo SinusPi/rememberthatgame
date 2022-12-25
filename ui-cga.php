@@ -22,11 +22,16 @@
 				</div>
 				<a href="#" class="cyanbut apply">apply</a>
 				*/ ?>
+				<!-- <a href="#" class="cyanbut" data-onclick="show_share">SHARE</a> -->
 				<div class="resets">
 					<div class="resetline"><a href="#" class="cyanbut" data-onclick="new_set">new game</a><div class="resetdesc">Play another set.<br>Your scores are saved.</div></div>
 					<div class="resetline"><a href="#" class="cyanbut" data-onclick="reset_seen">restart</a><div class="resetdesc">Retry skipped questions.</div></div>
 					<div class="resetline"><a href="#" class="cyanbut" data-onclick="reset_all">reset game</a><div class="resetdesc">Reset all your scores.</div></div>
 				</div>
+				Share: 
+				<a data-share="game">game</a>
+				<a data-share="set">set</a>
+				<a data-share="question">question</a>
 				<?php /*
 				<div class="resets">
 					<div class="resetline"><a href="#" class="cyanbut" data-onclick="reset_tut">reset tutorials</a><div class="resetdesc"></div></div>
@@ -51,12 +56,33 @@
 					<img src="img/title.gif" width=400 alt="Your Game Sounds Familiar"/>
 				</div>
 				
-				<h2>Pick a set:</h2>
+				<h2>Select a set:</h2>
 				<div id="select-set">
 					<?php foreach ($SETS as $set):?>
-						<a class="set hash" href="" data-onclick="startset" data-set="<?=$set['slug']?>">
+						<a class="set hash" href="" data-onclick="pick_set" data-set="<?=$set['slug']?>">
 							<div class="label"><?=$set['label']?></div>
 							<div class="description"><?=$set['description']?></div>
+						</a>
+					<?php endforeach; ?>
+				</div>
+			</div>
+
+			<div data-message="difficulty">
+				<div class="logo-mini">
+					<img src="img/title.gif" width=400 alt="Your Game Sounds Familiar"/>
+				</div>
+				
+				<h2>Select difficulty:</h2>
+				<div id="select-diff">
+					<?php foreach ([
+						'easy'=>['label'=>"Easy",'desc'=>"Multiple choice quiz.",'desc2'=>"Not entirely implemented!<br>Only available<br>for a few questions."],
+						'hard'=>['label'=>"Hard",'desc'=>"Type your answers."],
+						] as $slug=>$diff): ?>
+						<a class="diff hash" href="" data-onclick="pick_diff" data-diff="<?=$slug?>"">
+							<img src="img/diff-<?=$slug?>">
+							<div class="label"><?=$diff['label']?></div>
+							<div class="desc"><?=$diff['desc']?></div>
+							<?php if ($diff['desc2']): ?><div class="desc2"><?=$diff['desc2']?></div><?php endif; ?>
 						</a>
 					<?php endforeach; ?>
 				</div>

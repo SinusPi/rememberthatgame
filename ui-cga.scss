@@ -12,6 +12,7 @@ body {
 	color: white;
 	text-align: center;
 	margin: 0;
+	overflow-y: hidden;
 }
 #container {
 	margin: auto;
@@ -38,21 +39,20 @@ body {
 		flex: 1 1 auto;
 		align-self: auto;
 		width: 25%;
-		border:2px solid cyan;
-		height:10em;
-
+		border: 2px solid cyan;
+		height: 10em;
 
 		.section {
-			margin-bottom:0.2em;
+			margin-bottom: 0.2em;
 		}
 
 		.head {
-			text-align:left;
-			font-size:0.6em;
-			color:cyan;
+			text-align: left;
+			font-size: 0.6em;
+			color: cyan;
 		}
 		.label.set {
-			font-size:0.8em;
+			font-size: 0.8em;
 		}
 
 		.remaining {
@@ -125,14 +125,14 @@ body {
 						--left: 0;
 						--top: 0;
 						cursor: pointer;
-						margin:auto;
+						margin: auto;
 
 						&#play {
-							font-size:1.5em;
+							font-size: 1.5em;
 							line-height: 43pt;
 						}
 						&#pause {
-							font-size:1.7em;
+							font-size: 1.7em;
 							line-height: 37pt;
 						}
 					}
@@ -183,7 +183,7 @@ body {
 	margin: auto;
 	//padding-right: 68px;
 	text-align: left;
-	
+
 	img#gt {
 		width: 64px;
 		height: 64px;
@@ -199,11 +199,11 @@ body {
 		caret-color: cyan;
 		margin-left: 4px;
 		//margin-right: 60px;
-		width:11.5em;
+		width: 11.5em;
 	}
 	#ok {
 		width: 5em;
-		font-size:1.2em;
+		font-size: 1.2em;
 		cursor: pointer;
 	}
 }
@@ -213,7 +213,7 @@ a:focus,
 	outline: 3px solid magenta;
 }
 .cyanbut:active {
-	padding:4px 18px 0px 22px;
+	padding: 4px 18px 0px 22px;
 	box-shadow: inset 2px 2px 0px black;
 }
 a,
@@ -300,8 +300,8 @@ img {
 
 		#select-set {
 			width: 24em;
-			height:20em;
-			overflow-y:scroll;
+			height: 20em;
+			overflow-y: scroll;
 			margin: auto;
 			//display:flex;
 
@@ -310,8 +310,8 @@ img {
 				margin-bottom: 0.2em;
 				text-decoration: none;
 				padding: 0.2em;
-				margin:4px auto;
-				width:95%;
+				margin: 4px auto;
+				width: 95%;
 
 				&:hover {
 					outline: 3px solid magenta;
@@ -319,10 +319,50 @@ img {
 
 				.label {
 					margin-bottom: 0.1em;
+					color: white;
 				}
 
 				.description {
 					font-size: 14px;
+				}
+			}
+		}
+	}
+
+	[data-message="difficulty"] {
+		h2 {
+			margin-bottom: 1em;
+			font-size: 1.2em;
+		}
+
+		#select-diff {
+			display: flex;
+			width: 21em;
+			margin: auto;
+			place-content: space-between;
+			a.diff {
+				text-decoration: none;
+				width: 10em;
+				&:hover {
+					outline: 3px solid magenta;
+				}
+				img {
+					width: 150px;
+					height: 100px;
+					margin-bottom: 0.2em;
+				}
+				.label {
+					color: white;
+					font-size: 1.2em;
+					margin-bottom: 0.4em;
+				}
+				.desc {
+					font-size: 0.8em;
+					margin-bottom: 0.8em;
+				}
+				.desc2 {
+					font-size: 0.5em;
+					color: magenta;
 				}
 			}
 		}
@@ -453,5 +493,5 @@ a.cyanbut {
 }
 
 #footer {
-	margin-top:2em;
+	margin-top: 2em;
 }

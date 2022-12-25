@@ -13,6 +13,7 @@ body {
   color: white;
   text-align: center;
   margin: 0;
+  overflow-y: hidden;
 }
 
 #container {
@@ -290,9 +291,45 @@ img {
 }
 #messages [data-message=selection] #select-set a.set .label {
   margin-bottom: 0.1em;
+  color: white;
 }
 #messages [data-message=selection] #select-set a.set .description {
   font-size: 14px;
+}
+#messages [data-message=difficulty] h2 {
+  margin-bottom: 1em;
+  font-size: 1.2em;
+}
+#messages [data-message=difficulty] #select-diff {
+  display: flex;
+  width: 21em;
+  margin: auto;
+  place-content: space-between;
+}
+#messages [data-message=difficulty] #select-diff a.diff {
+  text-decoration: none;
+  width: 10em;
+}
+#messages [data-message=difficulty] #select-diff a.diff:hover {
+  outline: 3px solid magenta;
+}
+#messages [data-message=difficulty] #select-diff a.diff img {
+  width: 150px;
+  height: 100px;
+  margin-bottom: 0.2em;
+}
+#messages [data-message=difficulty] #select-diff a.diff .label {
+  color: white;
+  font-size: 1.2em;
+  margin-bottom: 0.4em;
+}
+#messages [data-message=difficulty] #select-diff a.diff .desc {
+  font-size: 0.8em;
+  margin-bottom: 0.8em;
+}
+#messages [data-message=difficulty] #select-diff a.diff .desc2 {
+  font-size: 0.5em;
+  color: magenta;
 }
 #messages h2 {
   margin-bottom: 2em;

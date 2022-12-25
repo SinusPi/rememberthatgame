@@ -32,6 +32,7 @@ if ($_REQUEST['do']=="prefs") {
 	$_SESSION['prefs']['set']=$_REQUEST['set'];
 	unset($_SESSION['matched']);
 }
+if (isset($_REQUEST['diff'])) $_SESSION['prefs']['diff']=$_REQUEST['diff'];
 
 $do_shuffle = $_REQUEST['shuffle'];
 
@@ -135,6 +136,7 @@ $RET['score']=count($RET['score_arr']);
 //$RET['set_arr']=$_SESSION['matched'];
 $RET['prefs']=(array)$_SESSION['prefs'];
 $RET['set'] = $SET;
+$RET['diff'] = $_SESSION['prefs']['diff'];
 $RET['err'] = $err ? $err->getMessage() : null;
 $RET['q']=$Q ? $Q->getValues() : null;
 

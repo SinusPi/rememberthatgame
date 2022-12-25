@@ -181,6 +181,9 @@ class RTG_GAME {
 
 		if (data.match!=null) this.UI.OnMatchedChanged(data.match,data.unseen)
 
+		this.UI.SET=data.set.slug
+		this.UI.DIFF=data.prefs.diff
+
 		this.UI.ShowScore(data)
 	}
 

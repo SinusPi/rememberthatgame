@@ -22,17 +22,19 @@ class UI_CGA {
 		$("[data-onclick=guess]").click(function (e) { e.preventDefault(); this_ui.OnAnswer(); })
 		$('#qform').submit(function (e) { e.preventDefault(); this_ui.OnAnswer(); return false })
 
-		$("#prefbut").show().click(_=>{ $("#prefs").slideToggle(); $("#prefbut").toggleClass("open"); return false });
+		$("#prefbut").show().click(_=>{ this.update_pref_all(); $("#prefs").slideToggle(); $("#prefbut").toggleClass("open"); return false });
 		//$("#prefform .apply").click(_=>{ this.Close_Menu(); if (GAME.Started) GAME.NextQuestion(); return false })
-		$("#prefform [data-onclick=new_set]").click(_=>{ this.Close_Menu(), this.Go(""); return false });
-		$("#prefform [data-onclick=reset_seen]").click(_=>{ this.Close_Menu(), GAME.Reset({seen:1}, _=>GAME.NextQuestion() ); return false });
-		//$("#prefform [data-onclick=reset_score]").click(_=>{ this.Close_Menu(), GAME.Reset({score:1}, _=>GAME.NextQuestion() ); return false });
-		$("#prefform [data-onclick=reset_tut]").click(_=>{ this.Close_Menu(), tutorials_reset(), GAME.NextQuestion(); return false });
-		$("#prefform [data-onclick=reset_all]").click(_=>{ this.Close_Menu(), GAME.Reset({all:1}, _=>this.Go("") ); return false });
+		$("[data-onclick=new_set]").click(_=>{ this.Close_Menu(), this.Go(""); return false });
+		$("[data-onclick=reset_seen]").click(_=>{ this.Close_Menu(), GAME.Reset({seen:1}, _=>GAME.NextQuestion() ); return false });
+		//$("[data-onclick=reset_score]").click(_=>{ this.Close_Menu(), GAME.Reset({score:1}, _=>GAME.NextQuestion() ); return false });
+		$("[data-onclick=reset_tut]").click(_=>{ this.Close_Menu(), tutorials_reset(), GAME.NextQuestion(); return false });
+		$("[data-onclick=reset_all]").click(_=>{ this.Close_Menu(), GAME.Reset({all:1}, _=>this.Go("") ); return false });
 
 		$("[data-onclick=start]").click(_=>{ GAME.NextQuestion(); return false })
 		$("[data-onclick=show_selection]").click(_=>{ this.Go("selection"); return false })
-		$("[data-onclick=startset]").click(function(e) { this_ui.Route("start="+$(this).data("set")); return false })
+		$("[data-onclick=show_share]").click(_=>{ this.ShowPopup("share"); return false })
+		$("[data-onclick=pick_set]").click(function(e) { this_ui.SET=$(this).data("set"); this_ui.Go("difficulty"); return false })
+		$("[data-onclick=pick_diff]").click(function(e) { this_ui.DIFF=$(this).data("diff"); this_ui.Route(`start=${this_ui.SET}/${this_ui.DIFF}`); return false })
 		$("[data-onclick=next]").click(e=>{ GAME.NextQuestion(null,false,true); e.preventDefault(); return false })
 		$("[data-onclick=play]").click(_=>{ GAME.StartAudio().then(_=>$('#input').focus()); return false })
 		$("[data-onclick=pause]").click(_=>{ GAME.Audio.player.pause(); $('#input').focus(); return false })
@@ -97,17 +99,24 @@ class UI_CGA {
 	}
 
 	Route(name,arg) {
-		if (name.indexOf("=")>-1) {
-			[name,arg]=name.split("=")
-		}
+		if (name.indexOf("=")>-1) [name,arg]=name.split("=")
+		
 		console.log("Route:",name,arg)
 		if (name=="" || name=="intro") {
 			this.ShowMessage("intro")
 			this.GAME.Audio.player.pause()
 		} else if (name=="selection") {
 			this.ShowMessage("selection")
+		} else if (name=="difficulty") {
+			this.ShowMessage("difficulty")
 		} else if (name=="start") {
-			this.GAME.SavePrefs({set:arg||"all"},_=>this.Route("next"))
+			let set=arg
+			let diff="hard"
+			let q
+			if (arg.indexOf("/")>-1) [set,diff,q]=arg.split("/")
+			this.SET=set
+			this.DIFF=diff
+			this.GAME.SavePrefs({set:set||"all",diff:diff},_=>this.Route(q?`q=${q}`:"next"))
 		} else if (name=="q") {
 			this.GAME.NextQuestion(arg)
 		} else if (name=="next") {
@@ -176,6 +185,11 @@ class UI_CGA {
 		$(".cga-checkbox:first-child()").trigger("update")
 		//let platforms = $("input.platcb").toArray().reduce(((tot,cb)=>{tot[cb.value]=cb.checked; return tot}),{})
 		//let not_all = 
+
+		let base_loc = location.toString().replace(/#.*/,"").replace(/\/$/,"")
+		$("[data-share=game]").attr("href",base_loc)
+		$("[data-share=set]").toggle(!!(this.SET && this.DIFF)).attr("href",base_loc+`/#start=${this.SET}/${this.DIFF}`)
+		$("[data-share=question]").toggle(!!(this.GAME.Q?.num)).attr("href",base_loc+`/#start=${this.SET}/${this.DIFF}/${this.GAME.Q?.num}`)
 	}
 	save_prefs() {
 		//console.log("platforms",platforms)
@@ -548,6 +562,10 @@ class UI_CGA {
 	OnError(err) {
 		console.error("UI showing error:",err)
 		this.ShowMessage("error", {"error":err})
+	}
+
+	ShowPopup() {
+
 	}
 
 }
