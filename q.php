@@ -39,7 +39,7 @@ $SETS = [['slug'=>"all",'label'=>"all",'description'=>"all",'cond'=>function($q)
 require("config.inc.php");
 
 $SETS_SLUGS = array_reduce($SETS,function($ss,$set) { $ss[$set['slug']]=$set; return $ss; },[]);
-$SET = $SETS_SLUGS[$_SESSION['prefs']['set'] ?: "all"];
+$SET = $SETS_SLUGS[$_SESSION['prefs']['set']] ?: $SETS_SLUGS["all"];
 if (!$SET) die(json_encode(['err'=>"No set selected"]));
 
 if (!isset($_SESSION['matched'])) {
