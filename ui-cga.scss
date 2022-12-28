@@ -6,14 +6,20 @@
 }
 html {
 	font: 2.5em "vcr_osd_monoregular";
+	-webkit-font-smoothing: none;
 }
 body {
-	background: black;
+	background: url(img/back.gif) black;
+	background-position: top;
+	background-size: calc(640px * 3) calc(400px * 3);
+	image-rendering: pixelated;
 	color: white;
 	text-align: center;
 	margin: 0;
 	overflow-y: hidden;
+	height: 100vh;
 }
+
 #container {
 	margin: auto;
 }
@@ -34,12 +40,15 @@ body {
 	}
 
 	#scorepane {
+		@extend .blackbox;
+
 		min-width: 100px;
 		order: 3;
 		flex: 1 1 auto;
 		align-self: auto;
 		width: 25%;
 		border: 2px solid cyan;
+		padding: 4px;
 		height: 10em;
 
 		.section {
@@ -62,10 +71,12 @@ body {
 	}
 
 	#questionpane {
+		@extend .blackbox;
+
 		order: 2;
 		flex: 2 1 auto;
 		align-self: auto;
-		width: 50%;
+		width: 20em;
 
 		#subject {
 			height: 6.5em;
@@ -132,8 +143,8 @@ body {
 							line-height: 43pt;
 						}
 						&#pause {
-							font-size: 1.7em;
-							line-height: 37pt;
+							font-size: 0.9em;
+							line-height: 47pt;
 						}
 					}
 				}
@@ -178,28 +189,40 @@ body {
 	}
 }
 
+.form-container {
+	height:200px;
+}
 #qform {
 	width: 15em;
 	margin: auto;
 	//padding-right: 68px;
 	text-align: left;
 
-	img#gt {
-		width: 64px;
-		height: 64px;
-		top: 12px;
-		position: relative;
-	}
-	#input {
-		font: 1rem "vcr_osd_monoregular";
-		padding: 0.2em 0.3em 0.2em 0.3em;
-		background: black;
-		border: 2px solid magenta;
-		color: white;
-		caret-color: cyan;
-		margin-left: 4px;
-		//margin-right: 60px;
-		width: 11.5em;
+	.qinput {
+		display:grid;
+		grid-template-columns: 64px auto 64px;
+
+		img#gt {
+			width: 64px;
+			height: 64px;
+			top: 0px;
+			position: relative;
+		}
+		.inp {
+			
+		}
+		#input {
+			font: 1rem "vcr_osd_monoregular";
+			padding: 0.2em 0.3em 0.2em 0.3em;
+			background: black;
+			border: 2px solid magenta;
+			color: white;
+			caret-color: cyan;
+			margin-left: 4px;
+			//margin-right: 60px;
+			width: 11.5em;
+			caret-shape: underscore;
+		}
 	}
 	#ok {
 		width: 5em;
@@ -278,6 +301,24 @@ img {
 	image-rendering: optimizeSpeed;
 }
 
+.blackbox {
+	background: black;
+	&::-webkit-scrollbar-button {
+		display: none;
+	}
+	&::-webkit-scrollbar {
+		width: 0.5em;
+		height: 0.5em;
+	}
+	&::-webkit-scrollbar-thumb {
+		background: url(img/cmw-c0m4w0.gif);
+		border-radius: 3px;
+
+		&:hover {
+		}
+	}
+}
+
 #messages {
 	font-size: 0.7em;
 	margin: auto;
@@ -292,15 +333,24 @@ img {
 		}
 	}
 
+	.select-h2 {
+		//@extend .blackbox;
+		margin: 1em auto 1em auto;
+		font-size: 1.2em;
+		width: 15em;
+		@extend .bigshadow;
+	}
+
 	[data-message="selection"] {
 		h2 {
-			margin-bottom: 1em;
-			font-size: 1.2em;
+			@extend .select-h2;
 		}
 
 		#select-set {
+			@extend .blackbox;
+
 			width: 24em;
-			height: 20em;
+			height: 18em;
 			overflow-y: scroll;
 			margin: auto;
 			//display:flex;
@@ -331,23 +381,26 @@ img {
 
 	[data-message="difficulty"] {
 		h2 {
-			margin-bottom: 1em;
-			font-size: 1.2em;
+			@extend .select-h2;
 		}
 
 		#select-diff {
+			@extend .blackbox;
 			display: flex;
-			width: 21em;
+			width: 23em;
 			margin: auto;
 			place-content: space-between;
+			padding: 0.5em;
+
 			a.diff {
 				text-decoration: none;
 				width: 10em;
+				padding: 0.5em;
 				&:hover {
 					outline: 3px solid magenta;
 				}
 				img {
-					width: 150px;
+					width: 160px;
 					height: 100px;
 					margin-bottom: 0.2em;
 				}
@@ -373,6 +426,7 @@ img {
 
 	h2 {
 		margin-bottom: 2em;
+		@extend .bigshadow;
 	}
 
 	p {
@@ -383,6 +437,11 @@ img {
 	[data-message] {
 		display: none; // at start
 	}
+}
+
+.bigshadow {
+	text-shadow: 6px 4px black, 4px 6px black, 4px 4px black, 4px 0px black, 0px 4px black, -4px 0px black,
+		0px -4px black;
 }
 
 #prefs {

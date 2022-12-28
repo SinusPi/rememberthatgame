@@ -1,6 +1,7 @@
+<script src="fancyinput.js"></script>
 <div id="container" style="display:none;">
 		<div id="title">
-			<a class='titlelink' href="index.php">Your Game Sounds Familiar</a>
+			<a class='titlelink' href="">Your Game Sounds Familiar</a>
 			<a href="#" id="prefbut">
 				<svg width="100%" height="100%" viewBox="0 0 50 50"  preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
 					<g id="Layer_1">
@@ -79,7 +80,7 @@
 						'hard'=>['label'=>"Hard",'desc'=>"Type your answers."],
 						] as $slug=>$diff): ?>
 						<a class="diff hash" href="" data-onclick="pick_diff" data-diff="<?=$slug?>"">
-							<img src="img/diff-<?=$slug?>">
+							<img src="img/diff-<?=$slug?>.gif">
 							<div class="label"><?=$diff['label']?></div>
 							<div class="desc"><?=$diff['desc']?></div>
 							<?php if ($diff['desc2']): ?><div class="desc2"><?=$diff['desc2']?></div><?php endif; ?>
@@ -126,7 +127,7 @@
 							</div>
 							<div id="control">
 								<a id="play" href="#" data-onclick="play" class="cyanbut playpause">&#x25b6;&#xfe0e;</a>
-								<a id="pause" href="#" data-onclick="pause" class="cyanbut playpause">&#x23f8;&#xfe0e;</a>
+								<a id="pause" href="#" data-onclick="pause" class="cyanbut playpause"><!--&#x23f8;&#xfe0e;-->▌▐</a> <!-- stupid chrome unicode vs bug -->
 								<!img id="play" class="playpause" src="img/but-play.gif" data-onclick="play">
 								<!img id="pause" class="playpause" src="img/but-pause.gif" data-onclick="pause">
 							</div>
@@ -140,10 +141,18 @@
 						</div>
 					</div>
 					<div id="questions"></div>
-					<form id="qform"><img id="gt" src="img/gt-c.gif"><input id="input" type="text"><a id="ok" class="cyanbut" data-onclick="guess">GUESS</a></form>
-					<h2 id='correct1'>Correct!</h2>
-					<h1 id='correct2'></h1>
-					<div id='correct3'></div>
+					<div class="form-container">
+						<form id="qform">
+							<div class="qinput">
+								<img id="gt" src="img/gt-c.gif" class="prompt">
+								<div class="inp fancyInput"><input id="input" type="text"></div>
+							</div>
+							<a id="ok" class="cyanbut" data-onclick="guess">GUESS</a>
+						</form>
+						<h2 class="correct" id='correct1'>Correct!</h2>
+						<h1 class="correct" id='correct2'></h1>
+						<div class="correct" id='correct3'></div>
+					</div>
 					<p><a id="next" class="cyanbut" href="#" data-onclick="next">NEXT</a></p>
 					<div class="tutorial" data-tutfor="next">Skip: Move on to the next question.</div>
 					<!--

@@ -6,14 +6,19 @@
 }
 html {
   font: 2.5em "vcr_osd_monoregular";
+  -webkit-font-smoothing: none;
 }
 
 body {
-  background: black;
+  background: url(img/back.gif) black;
+  background-position: top;
+  background-size: calc(640px * 3) calc(400px * 3);
+  image-rendering: pixelated;
   color: white;
   text-align: center;
   margin: 0;
   overflow-y: hidden;
+  height: 100vh;
 }
 
 #container {
@@ -42,6 +47,7 @@ body {
   align-self: auto;
   width: 25%;
   border: 2px solid cyan;
+  padding: 4px;
   height: 10em;
 }
 #maincontainer #scorepane .section {
@@ -63,7 +69,7 @@ body {
   order: 2;
   flex: 2 1 auto;
   align-self: auto;
-  width: 50%;
+  width: 20em;
 }
 #maincontainer #questionpane #subject {
   height: 6.5em;
@@ -125,8 +131,8 @@ body {
   line-height: 43pt;
 }
 #maincontainer #questionpane #subject #playercontrols #control a.playpause#pause {
-  font-size: 1.7em;
-  line-height: 37pt;
+  font-size: 0.9em;
+  line-height: 47pt;
 }
 #maincontainer #questionpane #subject #imageframe {
   order: 0;
@@ -159,18 +165,26 @@ body {
   margin-right: 4px;
 }
 
+.form-container {
+  height: 200px;
+}
+
 #qform {
   width: 15em;
   margin: auto;
   text-align: left;
 }
-#qform img#gt {
+#qform .qinput {
+  display: grid;
+  grid-template-columns: 64px auto 64px;
+}
+#qform .qinput img#gt {
   width: 64px;
   height: 64px;
-  top: 12px;
+  top: 0px;
   position: relative;
 }
-#qform #input {
+#qform .qinput #input {
   font: 1rem "vcr_osd_monoregular";
   padding: 0.2em 0.3em 0.2em 0.3em;
   background: black;
@@ -179,6 +193,7 @@ body {
   caret-color: cyan;
   margin-left: 4px;
   width: 11.5em;
+  caret-shape: underscore;
 }
 #qform #ok {
   width: 5em;
@@ -259,6 +274,20 @@ img {
   image-rendering: optimizeSpeed;
 }
 
+.blackbox, #messages [data-message=difficulty] #select-diff, #messages [data-message=selection] #select-set, #maincontainer #scorepane, #maincontainer #questionpane {
+  background: black;
+}
+.blackbox::-webkit-scrollbar-button, #messages [data-message=difficulty] #select-diff::-webkit-scrollbar-button, #messages [data-message=selection] #select-set::-webkit-scrollbar-button, #maincontainer #scorepane::-webkit-scrollbar-button, #maincontainer #questionpane::-webkit-scrollbar-button {
+  display: none;
+}
+.blackbox::-webkit-scrollbar, #messages [data-message=difficulty] #select-diff::-webkit-scrollbar, #messages [data-message=selection] #select-set::-webkit-scrollbar, #maincontainer #scorepane::-webkit-scrollbar, #maincontainer #questionpane::-webkit-scrollbar {
+  width: 0.5em;
+  height: 0.5em;
+}
+.blackbox::-webkit-scrollbar-thumb, #messages [data-message=difficulty] #select-diff::-webkit-scrollbar-thumb, #messages [data-message=selection] #select-set::-webkit-scrollbar-thumb, #maincontainer #scorepane::-webkit-scrollbar-thumb, #maincontainer #questionpane::-webkit-scrollbar-thumb {
+  background: url(img/cmw-c0m4w0.gif);
+  border-radius: 3px;
+}
 #messages {
   font-size: 0.7em;
   margin: auto;
@@ -268,13 +297,14 @@ img {
   height: 48px;
   font-size: 1.8em;
 }
-#messages [data-message=selection] h2 {
-  margin-bottom: 1em;
+#messages .select-h2, #messages [data-message=difficulty] h2, #messages [data-message=selection] h2 {
+  margin: 1em auto 1em auto;
   font-size: 1.2em;
+  width: 15em;
 }
 #messages [data-message=selection] #select-set {
   width: 24em;
-  height: 20em;
+  height: 18em;
   overflow-y: scroll;
   margin: auto;
 }
@@ -296,25 +326,23 @@ img {
 #messages [data-message=selection] #select-set a.set .description {
   font-size: 14px;
 }
-#messages [data-message=difficulty] h2 {
-  margin-bottom: 1em;
-  font-size: 1.2em;
-}
 #messages [data-message=difficulty] #select-diff {
   display: flex;
-  width: 21em;
+  width: 23em;
   margin: auto;
   place-content: space-between;
+  padding: 0.5em;
 }
 #messages [data-message=difficulty] #select-diff a.diff {
   text-decoration: none;
   width: 10em;
+  padding: 0.5em;
 }
 #messages [data-message=difficulty] #select-diff a.diff:hover {
   outline: 3px solid magenta;
 }
 #messages [data-message=difficulty] #select-diff a.diff img {
-  width: 150px;
+  width: 160px;
   height: 100px;
   margin-bottom: 0.2em;
 }
@@ -340,6 +368,10 @@ img {
 }
 #messages [data-message] {
   display: none;
+}
+
+.bigshadow, #messages .select-h2, #messages [data-message=selection] h2, #messages [data-message=difficulty] h2, #messages h2 {
+  text-shadow: 6px 4px black, 4px 6px black, 4px 4px black, 4px 0px black, 0px 4px black, -4px 0px black, 0px -4px black;
 }
 
 #prefs {
