@@ -78,8 +78,6 @@ body {
   align-items: center;
 }
 #maincontainer #questionpane #subject #playercontrols canvas {
-  width: 10em;
-  height: 2em;
   margin-top: 0.1em;
 }
 #maincontainer #questionpane #subject #playercontrols #slider {

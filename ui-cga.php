@@ -121,7 +121,7 @@
 					<audio id="audio" src="" type="audio/mpeg"></audio>
 					<div id="subject">
 						<div id="playercontrols">
-							<canvas id="c"></canvas>
+							<canvas id="c" width=400 height=100></canvas>
 							<div id="slider">
 								<div id="custom-handle" class="ui-slider-handle"></div>
 							</div>

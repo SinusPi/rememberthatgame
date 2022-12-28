@@ -453,7 +453,16 @@ class UI_CGA {
 
 		Audio.analyser.getByteFrequencyData(data);
 		let bin_size = Math.floor(data.length / num_bars / 4);
-		let bar_width = canvas.width / num_bars;
+		let bar_width = Math.floor(canvas.width / num_bars);
+
+		for (var x = 0; x <= num_bars; x += 1) {
+			for (var y=0;y<=1;y+=0.1) {
+				if (y<0.1)canvas_context.fillStyle = "white"
+				else if (y<0.5) canvas_context.fillStyle = "cyan"
+				else canvas_context.fillStyle = "magenta"
+				canvas_context.fillRect(Math.floor((x+0.5) * bar_width-2), Math.floor((y+0.05)*canvas.height-1.5), 4, 2);
+			}
+		}
 
 		// draw full bars, then draw a grid on top. Pixels, schmixels...
 		for (var i = 0; i < num_bars; i += 1) {
@@ -488,6 +497,9 @@ class UI_CGA {
 				canvas_context.fillRect(i * bar_width, 0.1 * canvas.height, bar_width - 2, -(bar_height - 0.9) * canvas.height);
 			}
 		}
+
+		// draw black horizontal bars
+		
 		canvas_context.strokeStyle = "black"
 		canvas_context.lineWidth = "2"
 		for (i = 0; i < 1; i += 0.1) {
@@ -497,20 +509,22 @@ class UI_CGA {
 			canvas_context.lineTo(canvas.width, h)
 			canvas_context.stroke()
 		}
+		
 
 		if (Audio.player.paused) return; // keep drawing freq when paused, let frequency die down slowly. Stop here and don't draw Oscilloscope when paused!
 
 		Audio.analyser.getByteTimeDomainData(data)
 		canvas_context.strokeStyle = "white"
 		canvas_context.lineWidth = "6"
-		bar_width = canvas.width / (num_bars)
-		for (var i = 0; i < num_bars; i += 1) {
+		bar_width = Math.floor(canvas.width / num_bars)
+		canvas_context.fillStyle = "white"
+		for (var i = 0; i <= num_bars; i += 1) {
 			sum = 0;
 			for (var j = 0; j < bin_size; j += 1) {
 				sum += data[(i * bin_size) + j];
 			}
 			average = sum / bin_size;
-			average = average - average % 15
+			average = average - average % 20
 
 			/*
 			// lightning oscilloscope
@@ -520,11 +534,16 @@ class UI_CGA {
 			} else canvas_context.lineTo(i * bar_width, (average/256) * canvas.height);
 			*/
 
+			/*
 			let y = (average / 256) * canvas.height
 			canvas_context.beginPath()
 			canvas_context.moveTo(i * bar_width, y)
 			canvas_context.lineTo((i + 0.85) * bar_width, y)
 			canvas_context.stroke()
+			*/
+			let y = (average / 256)
+			canvas_context.fillRect(Math.floor((i+0.5) * bar_width-2)-4, Math.floor((y+0.05)*canvas.height-1.5)+1, 11, 8);
+
 
 		}
 		//canvas_context.stroke()
