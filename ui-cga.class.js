@@ -104,7 +104,6 @@ class UI_CGA {
 		console.log("Route:",name,arg)
 		if (name=="" || name=="intro") {
 			this.ShowMessage("intro")
-			this.GAME.Audio.player.pause()
 		} else if (name=="selection") {
 			this.ShowMessage("selection")
 		} else if (name=="difficulty") {
@@ -199,7 +198,7 @@ class UI_CGA {
 
 	// called by GAME: when score data arrives
 	ShowScore(data) {  // use .totalscore, .score, .seen, .match; also .set.*
-		$("#scorepane").fillAllTemplates({...data,"set-label":data.set.label,"seenplus":data.seen+1})
+		$("#scorepane").fillAllTemplates({...data,"set-label":data.set.label,"seenplus":data.seen_set+1})
 		/*
 		$("#scorepane")
 			.find(".score").html(data.score).end()
@@ -224,6 +223,7 @@ class UI_CGA {
 		if (data) for (let field in data) $msg.find(`[data-var=${field}]`).html(data[field])
 		$("#footer").toggle(type=="intro")
 		$("#start").show()
+		this.GAME.Audio.player.pause()
 	}
 
 	// internal: when user types an answer
@@ -585,4 +585,5 @@ $(_=>{
 	$.fn.fillAllTemplates = function(vars) {
 		this.find("[data-template]").each(function() { $(this).fillTemplate(vars) })
 	}
+	//$('.inp input#input').fancyInput()[0].focus();
 })
