@@ -43,20 +43,31 @@ $SETS_SLUGS = array_reduce($SETS,function($ss,$set) { $ss[$set['slug']]=$set; re
 $SET = $SETS_SLUGS[$_SESSION['prefs']['set']] ?: $SETS_SLUGS["all"];
 if (!$SET) die(json_encode(['err'=>"No set selected"]));
 
+if ($_REQUEST['do']=="listsets") {
+	$questions = load_questions();
+	foreach ($SETS as &$set) {
+		$questions_in_set = array_filter($questions, function ($q) use ($set) {
+			return ($q
+				&& (
+					($set && $set['cond']($q))
+					||
+					(empty($_SESSION['prefs']) || count(array_intersect($q['pf'], $_SESSION['prefs'])) > 0)) // at least one pf_y is present in pf
+				//&& (!empty($pf_n) || count(array_intersect($q['pf'], $pf_n)) != count($q['pf'])) // not all of pf is in pf_n
+			);
+		});
+		$q_in_set=array_column($questions_in_set,'num');
+		$set['_count']=count($q_in_set);
+		$unseen = array_values(array_diff($q_in_set,$_SESSION['seen']));
+		$set['_unseen']=count($unseen);
+		$guessed = array_intersect($_SESSION['guessed'],$q_in_set);
+		$set['_score']=count($guessed);
+	}
+	die(json_encode($SETS));
+}
+
 if (!isset($_SESSION['matched'])) {
 	// load matching questions
-	$fs = Q::glob_all_datafiles("data/");
-
-	// read ALL QUESTIONS into $QS
-	$questions = [];
-	foreach ($fs as $f) {
-		try {
-			$q_obj = Q::read_q($f);
-			if ($q_obj) $questions[]=$q_obj->getValues();
-		} catch (Exception $e) {
-			header("X-rtg-q-error: ".$f." ".$e->getMessage(),false);
-		}
-	}
+	$questions = load_questions();
 
 	$_SESSION['total'] = count($questions);
 
@@ -122,6 +133,7 @@ try {
 
 //$Q['n']=$num;
 //$Q['f']=$f;
+$seen_set = array_intersect($_SESSION['seen'],$_SESSION['matched']);
 
 $RET['total'] = $_SESSION['total'];
 $RET['match'] = count($_SESSION['matched']);
@@ -129,6 +141,8 @@ $RET['match_arr'] = $_SESSION['matched']; // debug
 $RET['unseen'] = count($unseen);
 $RET['seen'] = count($_SESSION['seen']);
 $RET['seen_arr'] = $_SESSION['seen'];
+$RET['seen_set'] = count($seen_set);
+$RET['seen_set_arr'] = $seen_set;
 $RET['totalscore']=count($_SESSION['guessed']);
 $RET['guessed_arr']=$_SESSION['guessed'];
 $RET['score_arr']=array_intersect($_SESSION['guessed'],$_SESSION['matched']); // score for THIS set
@@ -146,4 +160,19 @@ die(json_encode($RET));
 
 function mark_seen($qnum) {
 	if (!in_array($qnum,$_SESSION['seen'])) $_SESSION['seen'][]=$qnum;
+}
+
+function load_questions() {
+	// read ALL QUESTIONS into $QS
+	$fs = Q::glob_all_datafiles("data/");
+	$questions = [];
+	foreach ($fs as $f) {
+		try {
+			$q_obj = Q::read_q($f);
+			if ($q_obj) $questions[]=$q_obj->getValues();
+		} catch (Exception $e) {
+			header("X-rtg-q-error: ".$f." ".$e->getMessage(),false);
+		}
+	}
+	return $questions;
 }
