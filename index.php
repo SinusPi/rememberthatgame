@@ -1,25 +1,21 @@
 <?php
 define ("DO_FACEBOOK",false);
 
-define ("UI","cga");
+define ("UI","console");
 
 require("config.inc.php");
 
-session_id("rtg"); session_start();
-
-if (strpos($_SERVER['HTTP_USER_AGENT'],"Firefox")!==FALSE) $htmlclass="ua-ff";
+$htmlclass = (strpos($_SERVER['HTTP_USER_AGENT'],"Firefox")!==FALSE) ? "ua-ff" : "";
 ?>
 <html class="<?=$htmlclass?>">
 
 <head>
 	<title>Your Game Sounds Familiar</title>
-	<link rel="stylesheet" href="ui-<?=UI?>.css">
+	<link rel="stylesheet" href="dist/ui-<?=UI?>.css">
 	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-	<script src="jquery-ui.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/gh/yeikos/jquery.history/jquery.history.min.js"></script>
+	<!link rel="stylesheet" href="dist/fancyInput.css">
 	<meta property="fb:app_id" content="2505132236168934">
-	<meta property="og:url"           content="http://djab.eu/remember-that-game" />
+	<meta property="og:url"           content="https://djab.eu/remember-that-game" />
   	<meta property="og:type"          content="website" />
   	<meta property="og:title"         content="Your Game Sounds Familiar" />
   	<meta property="og:description"   content="How many retro games can you recognize by music?" />
@@ -29,6 +25,10 @@ if (strpos($_SERVER['HTTP_USER_AGENT'],"Firefox")!==FALSE) $htmlclass="ua-ff";
  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-164157835-1"></script>
  <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'UA-164157835-1'); </script>
 <!-- -->
+	<style>
+		body { }
+		#console { font-family:monospace; position:absolute; left:0px; top:0px; width:100vw; height:100vh; }
+	</style>
 
 </head>
 
@@ -40,15 +40,10 @@ if (strpos($_SERVER['HTTP_USER_AGENT'],"Firefox")!==FALSE) $htmlclass="ua-ff";
 	<?php endif; ?>
 
 
-	<?php require("ui-".UI.".php"); ?>
-	<script src="rtg_game.class.js"></script>
-	<script>
-	$(() => {
-		var GAME = new RTG_GAME()
-		if (UI) GAME.registerUI(UI)
-		GAME.Init()
-	})
-	</script>
+	<div id="console">
+	</div>
+
+	<audio id="audio" src="" type="audio/mpeg"></audio>
 
 	<script>
 		function urialize(obj) {
@@ -59,49 +54,33 @@ if (strpos($_SERVER['HTTP_USER_AGENT'],"Firefox")!==FALSE) $htmlclass="ua-ff";
 				}
 			return str.join("&");
 		}
-
-		// Paul Irish requestAnimationFrame Polyfill
-		// http://www.paulirish.com/2011/requestanimationframe-for-smart-animating/
-		window.requestAnimFrame = (function() {
-			return window.requestAnimationFrame ||
-				window.webkitRequestAnimationFrame ||
-				window.mozRequestAnimationFrame ||
-				function(callback) {
-					window.setTimeout(callback, 1000 / 60);
-				};
-		})();
-
 	</script>
 
-	<script>
-		var INIT_NUM = <?=intval($_REQUEST['q'])?>||null
-	</script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="dist/jquery-ui.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/gh/yeikos/jquery.history/jquery.history.min.js"></script>
+
+	<div id="game">
+	</div>
+</body>
+
+<?php @include("ui-".UI.".php"); ?>
+
+<script>
+	var INIT_NUM = <?=json_encode(intval($_REQUEST['q']??null))?>;
+
+	function zerolog(s,...args) {
+		$("#console").append("<p>"+s+"</p>")
+		console.log(s,...args)
+	}
+
+	zerolog("Booting YGSF OS v0.1.")
+</script>
+
+<script src="dist/bundle.js"></script>
 
 	<script>
-		var oldTime = 0
-
-		var Totalscore=0
-		var Setscore=0
-		var Totalseen=0
-
-
-		var questionNames = {
-			name: "Name of the game",
-			fullname: "Full name",
-			character: "Character name",
-			title: "Song title"
-		}
-		
-		var Subseq_errors = 0
-
 		/// #param score number
-
-		function next_hint() {
-			Hints++
-			Score++
-			show_correct(Score,true)
-			$("#hint").html(Score<Q.maxscore-1?"GIVE UP":"GIVE UP")
-		}
 
 		/*
 		function init_tristates() {
@@ -131,6 +110,5 @@ if (strpos($_SERVER['HTTP_USER_AGENT'],"Firefox")!==FALSE) $htmlclass="ua-ff";
 		*/
 
 	</script>
-</body>
 
 </html>

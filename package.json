@@ -1,0 +1,24 @@
+{
+  "name": "your-game-sounds-familiar",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "browserify": "^17.0.0",
+    "tsify": "^5.0.4"
+  },
+  "devDependencies": {
+    "@types/jquery": "^3.5.16",
+    "typescript": "^4.9.4",
+    "watchify": "^4.0.0",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "bfy": "browserify ts/index.ts -p [ tsify ] > dist/bundle.js",
+    "wfy": "watchify ts/index.ts -p [ tsify ] -o dist/bundle.js"
+  },
+  "author": "",
+  "license": "ISC"
+}

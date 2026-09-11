@@ -1,3 +1,6 @@
+import {YGSF_GAME} from "./rtg_game.class"
+import {GameUI} from "./gameui.class"
+
 /*
 		 MM  MM  MMMMMM
 		 MM  MM    MM
@@ -5,11 +8,16 @@
 		 MM  MM    MM
 		  MMMM   MMMMMM
 */
-class UI_CGA {
+
+class UI_CGA implements GameUI {
+
+	GAME:YGSF_GAME
+	freq_canvas: HTMLCanvasElement
+	freq_canvas_context: CanvasRenderingContext2D | null
 
 	// called by GAME: when engine initialization starts. Only "static" initialization here.
-	Init(GAME) {
-		console.log("CGA UI initing...")
+	Init(GAME:YGSF_GAME) {
+		GAME.llog("CGA UI initing...")
 		this.GAME = GAME
 
 		this.init_checkboxes()
@@ -22,19 +30,19 @@ class UI_CGA {
 		$("[data-onclick=guess]").click(function (e) { e.preventDefault(); this_ui.OnAnswer(); })
 		$('#qform').submit(function (e) { e.preventDefault(); this_ui.OnAnswer(); return false })
 
-		$("#prefbut").show().click(_=>{ this.update_pref_all(); $("#prefs").slideToggle(); $("#prefbut").toggleClass("open"); return false });
+		$("#prefbut").show().click(_=>{ /*this.update_pref_all();*/ $("#prefs").slideToggle(); $("#prefbut").toggleClass("open"); return false });
 		//$("#prefform .apply").click(_=>{ this.Close_Menu(); if (GAME.Started) GAME.NextQuestion(); return false })
 		$("[data-onclick=new_set]").click(_=>{ this.Close_Menu(), this.Go(""); return false });
 		$("[data-onclick=reset_seen]").click(_=>{ this.Close_Menu(), GAME.Reset({seen:1}, _=>GAME.NextQuestion() ); return false });
 		//$("[data-onclick=reset_score]").click(_=>{ this.Close_Menu(), GAME.Reset({score:1}, _=>GAME.NextQuestion() ); return false });
-		$("[data-onclick=reset_tut]").click(_=>{ this.Close_Menu(), tutorials_reset(), GAME.NextQuestion(); return false });
+		$("[data-onclick=reset_tut]").click(_=>{ this.Close_Menu(), GAME.NextQuestion(); return false });
 		$("[data-onclick=reset_all]").click(_=>{ this.Close_Menu(), GAME.Reset({all:1}, _=>this.Go("") ); return false });
 
 		$("[data-onclick=start]").click(_=>{ GAME.NextQuestion(); return false })
 		$("[data-onclick=show_selection]").click(_=>{ this.Go("selection"); return false })
 		$("[data-onclick=show_share]").click(_=>{ this.ShowPopup("share"); return false })
-		$("[data-onclick=pick_set]").click(function(e) { this_ui.SET=$(this).data("set"); this_ui.Go("difficulty"); return false })
-		$("[data-onclick=pick_diff]").click(function(e) { this_ui.DIFF=$(this).data("diff"); this_ui.Route(`start=${this_ui.SET}/${this_ui.DIFF}`); return false })
+		$("[data-onclick=pick_set]").click(function(e) { this_ui.GAME.State.set=$(this).data("set"); this_ui.GAME.SaveState(); this_ui.Go("difficulty"); return false })
+		$("[data-onclick=pick_diff]").click(function(e) { this_ui.GAME.State.diff=$(this).data("diff"); this_ui.GAME.SaveState(); this_ui.Route(`start=${this_ui.GAME.State.set}/${this_ui.GAME.State.diff}`); return false })
 		$("[data-onclick=next]").click(e=>{ GAME.NextQuestion(null,false,true); e.preventDefault(); return false })
 		$("[data-onclick=play]").click(_=>{ GAME.StartAudio().then(_=>$('#input').focus()); return false })
 		$("[data-onclick=pause]").click(_=>{ GAME.Audio.player.pause(); $('#input').focus(); return false })
@@ -46,7 +54,7 @@ class UI_CGA {
 		$("#play").show()
 		$("#pause").hide()
 
-		console.log("CGA UI init done, ready to show stuff.")
+		GAME.llog("CGA UI inited done, ready to show stuff in all cyan and magenta.")
 	}
 
 	SetupHistory() {
@@ -84,7 +92,7 @@ class UI_CGA {
 	OnReady() {
 		$.history.listen('hash') // possibly fire this.Route immediately
 		if (!location.hash) this.Route("")
-		if (INIT_NUM) this.GAME.NextQuestion()
+		if ("INIT_NUM" in window) this.GAME.NextQuestion()
 	}
 
 	Close_Menu() {
@@ -98,24 +106,23 @@ class UI_CGA {
 		this.Route(href)
 	}
 
-	Route(name,arg) {
+	Route(name:string,arg?:string) {
 		if (name.indexOf("=")>-1) [name,arg]=name.split("=")
 		
 		console.log("Route:",name,arg)
 		if (name=="" || name=="intro") {
 			this.ShowMessage("intro")
 		} else if (name=="selection") {
-			this.ShowMessage("selection")
+			this.ShowSets()
 		} else if (name=="difficulty") {
 			this.ShowMessage("difficulty")
 		} else if (name=="start") {
-			let set=arg
-			let diff="hard"
-			let q
-			if (arg.indexOf("/")>-1) [set,diff,q]=arg.split("/")
-			this.SET=set
-			this.DIFF=diff
-			this.GAME.SavePrefs({set:set||"all",diff:diff},_=>this.Route(q?`q=${q}`:"next"))
+			let set,diff,q
+			if (arg && arg.indexOf("/")>-1) [set,diff,q]=arg.split("/")
+			this.GAME.State.set=set
+			this.GAME.State.diff=diff
+			//this.GAME.SavePrefs({set:set,diff:diff}).then(_=>this.Route(q?`q=${q}`:"next"))
+			this.Route(q?`q=${q}`:"next")
 		} else if (name=="q") {
 			this.GAME.NextQuestion(arg)
 		} else if (name=="next") {
@@ -132,6 +139,13 @@ class UI_CGA {
 	OnStart() {
 	}
 
+	SetupAudioUI() {
+		this.InitAudioButtons(this.GAME.Audio)
+		this.InitAudioSlider(this.GAME.Audio)
+		this.InitFreqAnalyser()
+		console.log("CGA audioplayer visuals are ready.")
+	}
+
 	dont_save_prefs = false
 
 	// called by GAME: when user prefs arrive
@@ -140,7 +154,7 @@ class UI_CGA {
 		for (let p = 0; p < prefs.length; p++)
 			$("#prefform input[name='pf[]'][value='" + prefs[p] + "']").prop("checked", 1)
 		$(".cga-checkbox").trigger("update")
-		this.update_pref_all()
+		//this.update_pref_all()
 	}
 	// called by GAME: when number of matched questions changes
 	OnMatchedChanged(match,unseen) {
@@ -151,13 +165,6 @@ class UI_CGA {
 	OnQuestionLoading() {
 		$("#input").val("")
 		$("#commentsbox").hide()
-	}
-
-	SetupAudioUI() {
-		this.InitAudioButtons(this.GAME.Audio)
-		this.InitAudioSlider(this.GAME.Audio)
-		this.InitFreqAnalyser()
-		console.log("CGA audioplayer visuals are ready.")
 	}
 
 	init_checkboxes() {
@@ -177,6 +184,7 @@ class UI_CGA {
 	}
 
 	update_pref_all() {
+		return
 		let any_checked = $("input.platcb").not("[value=all]").is(":checked")
 		if (!any_checked) $("input.platcb[value=all]").prop("checked", true)
 		else $("input.platcb[value=all]").prop("checked", false)
@@ -185,20 +193,25 @@ class UI_CGA {
 		//let platforms = $("input.platcb").toArray().reduce(((tot,cb)=>{tot[cb.value]=cb.checked; return tot}),{})
 		//let not_all = 
 
-		let base_loc = location.toString().replace(/#.*/,"").replace(/\/$/,"")
+		let base_loc = location.toString().replace(/#.*____/,"").replace(/\/$/,"") // DELETE THE ____ !!!!
 		$("[data-share=game]").attr("href",base_loc)
-		$("[data-share=set]").toggle(!!(this.SET && this.DIFF)).attr("href",base_loc+`/#start=${this.SET}/${this.DIFF}`)
-		$("[data-share=question]").toggle(!!(this.GAME.Q?.num)).attr("href",base_loc+`/#start=${this.SET}/${this.DIFF}/${this.GAME.Q?.num}`)
+		$("[data-share=set]").toggle(!!(this.GAME.State.set && this.GAME.State.diff)).attr("href",base_loc+`/#start=${this.GAME.State.set}/${this.GAME.State.diff}`)
+		$("[data-share=question]").toggle(!!(this.GAME.Q?.num)).attr("href",base_loc+`/#start=${this.GAME.State.set}/${this.GAME.State.diff}/${this.GAME.Q?.num}`)
 	}
+
 	save_prefs() {
+		return
 		//console.log("platforms",platforms)
-		this.GAME.SavePrefs($("#prefform").serializeArray().reduce((o, kv) => [...o, kv.value], [])) //.filter(n=>n)
+		//this.GAME.SavePrefs($("#prefform").serializeArray().reduce((o, kv) => [...o, kv.value], [])) //.filter(n=>n)
 	}
 
 
 	// called by GAME: when score data arrives
 	ShowScore(data) {  // use .totalscore, .score, .seen, .match; also .set.*
-		$("#scorepane").fillAllTemplates({...data,"set-label":data.set.label,"seenplus":data.seen_set+1})
+		if (data.set)
+			$("#scorepane .section").fillAllTemplates({...data,setlabel:data?.set?.label || "?",setseenplus:data.setseen+1})
+		else
+			$("#scorepane").fillAllTemplates({setlabel:"(none)",totalscore:this.GAME.State.guessed.length,score:"0",setseenplus:1,setsize:1})
 		/*
 		$("#scorepane")
 			.find(".score").html(data.score).end()
@@ -214,21 +227,23 @@ class UI_CGA {
 	}
 
 	// called by GAME: to show a message
-	ShowMessage(type, data) {
+	ShowMessage(type: string, data?: Record<string,string>) {
 		$("#questionpane,#leftpane,#scorepane").hide()
 		let $msg = $("#messages")
 			.show()
 			.find("[data-message]").hide().end()
 			.find(`[data-message='${type}']`).show()
-		if (data) for (let field in data) $msg.find(`[data-var=${field}]`).html(data[field])
+		$msg.find(`[data-ifvar]`).add(`[data-var]`).hide()
+		console.log("ERR:" ,data)
+		if (data) for (let field in data) $msg.find(`[data-ifvar=${field}]`).show(),$msg.find(`[data-var=${field}]`).show().html(data[field])
 		$("#footer").toggle(type=="intro")
 		$("#start").show()
-		this.GAME.Audio.player.pause()
+		this.GAME.Audio.player?.pause()
 	}
 
 	// internal: when user types an answer
 	OnAnswer() {
-		let guess = $("#input").val().toLowerCase()
+		let guess = $("#input").val()?.toString().toLowerCase()
 		this.GAME.OnAnswer(guess)
 	}
 
@@ -267,6 +282,7 @@ class UI_CGA {
 			if (!hint) {
 				this.GAME.SaveGuessed()
 			}
+			
 
 			//let a = Q.answer
 			//if (platform) a += " (" + platform + ")"
@@ -286,16 +302,21 @@ class UI_CGA {
 			$("#qform").hide()
 			$("#hint").hide()
 
+			/*
 			$("#commentsbox").show()
 			$(".fb-share-button").click(function (e) {
-				FB.ui({
+				FB && (FB as unknown as any).ui({
 					method: 'share',
 					href: $(this).attr("data-href"),
 					quote: Hints ? "Can you recognize this game? I didn't!" : "Can you recognize this game? I did!"
 				}, function (response) { console.log(response) });
 			})
+			*/
 
-			setTimeout(() => $("#next").html("NEXT").focus(), 10)
+			if (this.GAME.State.set)
+				setTimeout(() => $("#next").html("NEXT").data("onclick","next").trigger("focus"), 10)
+			else
+				setTimeout(() => $("#next").html("NEW GAME").data("onclick","new_set").trigger("focus"), 10)
 		}
 	}
 
@@ -303,7 +324,7 @@ class UI_CGA {
 
 	// called by GAME: to show a question
 	async ShowQuestion(q) {
-		INIT_NUM = 0
+		(window as unknown as Record<string,number>).INIT_NUM = 0
 
 		// sanity check!
 
@@ -333,19 +354,19 @@ class UI_CGA {
 				$q.append("<div class='question' id='score1'><img src='star-0.gif'><span class='answer'>"+questions.name+"</span></div>")
 			}
 			*/
-			let qta = document.querySelector("template[data-name=question]").content
-			let $b = $("#questions").empty().append(qta.cloneNode(true)).children(":last").find("tbody")
-			let qtb = qta.querySelector("template[data-name=question-a]").content
+			let qta = (document.querySelector("template[data-name=question]") as HTMLTemplateElement).content
+			let $b = $("#questions").empty().append(qta.cloneNode(true) as HTMLElement).children(":last").find("tbody")
+			let qtb = (qta.querySelector("template[data-name=question-a]") as HTMLTemplateElement).content
 			q.maxscore = 0
 			let s
 			//let qt = document.querySelector("template[data-name=question]").content.cloneNode(true)
 			for (let s of q.scores) {
 				console.log("Score",s)
 				q.maxscore++
-				let $a = $b.append(qtb.cloneNode(true)).children(":last")
+				let $a = $b.append(qtb.cloneNode(true) as HTMLElement).children(":last")
 				$a
 					.attr("id","score"+q.maxscore)
-					.find(".answer").html(questionNames[s.name])
+					.find(".answer").html(this.GAME.questionNames[s.name])
 				
 				//$b.append("<tr class='question' id='score" + i + "'><td class=star><img src='img/star-0.gif'></td><td class='answer'>" + questions[s.tag] + "</td></tr>")
 			}
@@ -353,7 +374,7 @@ class UI_CGA {
 			if (q.type == "mp3") {
 				$("#playercontrols").show()
 				$("#imageframe").hide()
-				$(this.GAME.Audio.player).attr("src", q.file)
+				if (this.GAME.Audio.player) $(this.GAME.Audio.player).attr("src", q.file)
 				console.log("Loading " + q.file)
 				await this.GAME.StartAudio()
 			} else if (q.type == "png" || q.type == "gif") {
@@ -364,12 +385,16 @@ class UI_CGA {
 
 			$.history.push("q="+q.num)
 
-			let current_url = window.location //"http://" + location.hostname + "/remember-that-game/" + q.num
+			
+			let current_url = window.location.toString() //"http://" + location.hostname + "/remember-that-game/" + q.num
+			
+			/*
 			$(".fb-comments").attr("data-href", current_url)
 			$(".fb-share-button").attr("data-href", current_url)
-			if (typeof(FB)!="undefined" && FB.XFBML) {
+			if ("XFBML" in FB) {
 				FB.XFBML.parse()
 			}
+			*/
 
 		} else {
 			this.ShowMessage("error", {error:"Oops! Something crashed!"})
@@ -380,10 +405,22 @@ class UI_CGA {
 		this.ShowMessage("end")
 	}
 
+	ShowSets() {
+		this.ShowMessage("selection")
+		this.GAME.ListSets().then(_=>this.ShowSetScores())
+	}
+	ShowSetScores() {
+		let thisUI=this
+		$("#select-set [data-forset]").each(function(e) {
+			let setslug=$(this).data("forset")
+			let set=thisUI.GAME.AllSets[setslug]
+			$(this).fillTemplate({num:set._count,seen:set._seen,score:set._score})
+		})
+	}
 
 
 	UpdateAudioSlider(Audio) {
-		if (!Audio.player.paused && !Audio.player.ended && Audio.player.currentTime != oldTime)
+		if (!Audio.player.paused && !Audio.player.ended) //  && Audio.player.currentTime != oldTime
 			$("#slider").slider("value", Audio.player.currentTime / Audio.player.duration * 100)
 	}
 
@@ -423,14 +460,13 @@ class UI_CGA {
 
 	InitFreqAnalyser() {
 		// canvas stuff
-		this.freq_canvas = document.getElementById('c');
+		this.freq_canvas = document.getElementById('c') as HTMLCanvasElement
+		if (!this.freq_canvas) throw new Error("Couldn't init freq analyser: no #c element!")
 		this.freq_canvas_context = this.freq_canvas.getContext('2d');
 		this.FreqAnalyserFrame()
 	}
 
 	FreqAnalyserFrame() {
-		window.requestAnimFrame(() => this.FreqAnalyserFrame()) //refire
-
 		let now = Date.now()
 		let elapsed = now - this.FreqThen
 		if (elapsed < this.FreqDelay) return
@@ -448,10 +484,12 @@ class UI_CGA {
 		let canvas = this.freq_canvas
 		let canvas_context = this.freq_canvas_context
 
+		if (!canvas_context) return
+
 		// clear canvas
 		canvas_context.clearRect(0, 0, canvas.width, canvas.height);
 
-		Audio.analyser.getByteFrequencyData(data);
+		Audio.analyser?.getByteFrequencyData(data);
 		let bin_size = Math.floor(data.length / num_bars / 4);
 		let bar_width = Math.floor(canvas.width / num_bars);
 
@@ -501,7 +539,7 @@ class UI_CGA {
 		// draw black horizontal bars
 		
 		canvas_context.strokeStyle = "black"
-		canvas_context.lineWidth = "2"
+		canvas_context.lineWidth = 2
 		for (i = 0; i < 1; i += 0.1) {
 			let h = Math.floor(i * canvas.height)
 			canvas_context.beginPath()
@@ -511,11 +549,11 @@ class UI_CGA {
 		}
 		
 
-		if (Audio.player.paused) return; // keep drawing freq when paused, let frequency die down slowly. Stop here and don't draw Oscilloscope when paused!
+		if (Audio.player?.paused) return; // keep drawing freq when paused, let frequency die down slowly. Stop here and don't draw Oscilloscope when paused!
 
-		Audio.analyser.getByteTimeDomainData(data)
+		Audio.analyser?.getByteTimeDomainData(data)
 		canvas_context.strokeStyle = "white"
-		canvas_context.lineWidth = "6"
+		canvas_context.lineWidth = 6
 		bar_width = Math.floor(canvas.width / num_bars)
 		canvas_context.fillStyle = "white"
 		for (var i = 0; i <= num_bars; i += 1) {
@@ -547,6 +585,8 @@ class UI_CGA {
 
 		}
 		//canvas_context.stroke()
+
+		window.requestAnimationFrame(() => this.FreqAnalyserFrame()) //refire
 	}
 
 	// Spectrum / Waveform
@@ -568,28 +608,29 @@ class UI_CGA {
 	}
 	tutorials_reset() {
 		this.Tutshidden = {}
-		tutorials_save()
+		this.tutorials_save()
 	}
 	tutorials_load() {
-		this.Tutshidden = JSON.parse(window.localStorage.getItem("tutshidden")) || {}
+		this.Tutshidden = {}
+		try {
+			this.Tutshidden = JSON.parse(window.localStorage.getItem("tutshidden") || "{}")
+		} catch (e) {
+		}
 		$(".tutorial").append("<div class='close mini'>x</div>")
 		let this_ui = this
 		$(".close").click(function () { this_ui.Tutshidden[$(this).parent().data("tutfor")] = true; this_ui.tutorials_save(); $(this).parent().hide() })
 		this.tutorials_update()
 	}
 
-	OnError(err) {
-		console.error("UI showing error:",err)
-		this.ShowMessage("error", {"error":err})
+	OnError(error: string,data: Record<string, string> | null | undefined) {
+		console.error("UI showing error:",error,data)
+		this.ShowMessage("error", {error,...data})
 	}
 
-	ShowPopup() {
-
+	ShowPopup(v) {
 	}
 
 }
-
-var UI = new UI_CGA();
 
 function Template(s,vars) {
 	return s.replace(/\{([^}]+)\}/g, (_,key)=>{
@@ -598,11 +639,45 @@ function Template(s,vars) {
 }
 
 $(_=>{
-	$.fn.fillTemplate = function(vars) {
-		if (this.data("template")) this.html(Template(this.data("template"),vars))
-	}
-	$.fn.fillAllTemplates = function(vars) {
-		this.find("[data-template]").each(function() { $(this).fillTemplate(vars) })
+	$.fn.fillTemplate = function(vars):JQuery {
+		if (this.data("template")) return this.html(Template(this.data("template"),vars)); else return this
+	};
+
+	$.fn.fillAllTemplates = function(vars):JQuery {
+		return this.find("[data-template]").each(function() { $(this).fillTemplate(vars) });
 	}
 	//$('.inp input#input').fancyInput()[0].focus();
 })
+
+// make the plugin available outside this file
+declare global {
+    interface JQuery {
+        fillTemplate(vars: any): this
+        fillAllTemplates(vars: any): this
+		slider(arg1:any,arg2?:any):number
+		effect(arg1:any,arg2?:any):this
+    }
+	interface JQueryStatic {
+		history:{on(i:any,ev:Function):any,listen(i:any):any,push(i:any):any}
+	}
+}
+
+/*
+// Paul Irish requestAnimationFrame Polyfill
+// http://www.paulirish.com/2011/requestanimationframe-for-smart-animating/
+window.requestAnimFrame = (function() {
+	return window.requestAnimationFrame ||
+		window.webkitRequestAnimationFrame ||
+		window.mozRequestAnimationFrame ||
+		function(callback) {
+			window.setTimeout(callback, 1000 / 60);
+		};
+})();
+*/
+
+if (window) {
+	window['YGSF_UI'] = window['YGSF_UI'] || {}
+	window['YGSF_UI']['cga'] = new UI_CGA()
+}
+
+export {UI_CGA}

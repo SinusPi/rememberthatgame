@@ -1,4 +1,4 @@
-<script src="fancyinput.js"></script>
+<script src="dist/fancyinput.js"></script>
 <div id="container" style="display:none;">
 		<div id="title">
 			<a class='titlelink' href="">Your Game Sounds Familiar</a>
@@ -62,6 +62,7 @@
 					<?php foreach ($SETS as $set):?>
 						<a class="set hash" href="" data-onclick="pick_set" data-set="<?=$set['slug']?>">
 							<div class="label"><?=$set['label']?></div>
+							<div class="progress" data-forset="<?=$set['slug']?>" data-template="Questions: {num} - Progress: {seen} - Score: {score}"></div>
 							<div class="description"><?=$set['description']?></div>
 						</a>
 					<?php endforeach; ?>
@@ -103,6 +104,7 @@
 				<p>Oops.</p>
 				<p>The game has crashed!</p>
 				<p data-var="error"></p>
+				<p data-ifvar="errline">Line: <span data-var="errline">#</span></p>
 			</div>
 		</div>
 		
@@ -118,7 +120,6 @@
 				<div id="question">
 					<a id="qnum">Question: #<span data-val></span></a>
 					<div id="qstats"></div>
-					<audio id="audio" src="" type="audio/mpeg"></audio>
 					<div id="subject">
 						<div id="playercontrols">
 							<canvas id="c" width=400 height=100></canvas>
@@ -171,11 +172,11 @@
 			<div id="scorepane">
 				<div class="section">
 					<div class="head set">Set</div>
-					<div class="label set" data-template="{set-label}"></div>
+					<div class="label set" data-template="{setlabel}"></div>
 				</div>
 				<div class="section">
 					<div class="head question">Question</div>
-					<div class="label question" data-template="{seenplus} of {match}"></div>
+					<div class="label question" data-template="{setseenplus} of {setsize}"></div>
 				</div>
 				<div class="section">
 					<div class="head score">Score</div>
@@ -190,8 +191,6 @@
 		<br>&nbsp;
 	</div>
 
-	<script src="ui-cga.class.js"></script>
-
 <template data-name="question">
 	<table>
 		<colgroup><col><col width='100%'></colgroup>
@@ -205,3 +204,7 @@
 		</tbody>
 	</table>
 </template>
+
+<script>
+	window.YGSF_UI = "cga"
+</script>

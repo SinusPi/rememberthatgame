@@ -1,6 +1,7 @@
 @font-face {
 	font-family: "vcr_osd_monoregular";
-	src: url("vcr_osd_mono_1.001-webfont.woff2") format("woff2"), url("vcr_osd_mono_1.001-webfont.woff") format("woff");
+	src:	url("vcr_osd_mono_1.001-webfont.woff2") format("woff2"),
+		url("vcr_osd_mono_1.001-webfont.woff")  format("woff");
 	font-weight: normal;
 	font-style: normal;
 }
@@ -8,16 +9,27 @@ html {
 	font: 2.5em "vcr_osd_monoregular";
 	-webkit-font-smoothing: none;
 }
+
+body.loaded {
+  background: url(../img/back.gif) black;
+  background-position: top;
+  background-size: calc(640px * 3) calc(400px * 3);
+}
+
 body {
-	background: url(img/back.gif) black;
-	background-position: top;
-	background-size: calc(640px * 3) calc(400px * 3);
+	background: black;
 	image-rendering: pixelated;
 	color: white;
 	text-align: center;
 	margin: 0;
 	overflow-y: hidden;
 	height: 100vh;
+}
+
+#console {
+	color: lightgray;
+	font-size:0.5em;
+	text-align:left;
 }
 
 #container {
@@ -260,7 +272,7 @@ a:visited {
 div#title {
 	margin-bottom: 0.3em;
 	margin-top: 0px;
-	background: url(img/cmw-c0m2w0.gif);
+	background: url(../img/cmw-c0m2w0.gif);
 	border-bottom: 2px solid magenta;
 	padding: 5px 0px 10px 0px;
 	text-shadow: 4px 4px black;
@@ -311,7 +323,7 @@ img {
 		height: 0.5em;
 	}
 	&::-webkit-scrollbar-thumb {
-		background: url(img/cmw-c0m4w0.gif);
+		background: url(../img/cmw-c0m4w0.gif);
 		border-radius: 3px;
 
 		&:hover {
@@ -368,11 +380,19 @@ img {
 				}
 
 				.label {
+					font-size:1.2em;
 					margin-bottom: 0.1em;
 					color: white;
 				}
 
+				.progress {
+					height:1.1em;
+					margin-bottom:0.1em;
+					font-size:0.7em;
+				}
+
 				.description {
+					color:magenta;
 					font-size: 14px;
 				}
 			}
@@ -507,7 +527,7 @@ input.cga-checkbox {
 a.cyanbut {
 	display: block;
 	border: 2px solid cyan;
-	background: url(img/cmw-c4m0w0.gif);
+	background: url(../img/cmw-c4m0w0.gif);
 	text-decoration: none;
 	text-shadow: 2px 2px black;
 	color: white;

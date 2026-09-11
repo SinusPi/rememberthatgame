@@ -1,2 +1,4 @@
 RewriteEngine On
 RewriteRule ^(\d+)$ ?q=$0 [L]
+
+#RewriteRule ^q=(\d+)$ get.php?q=$1 [L]

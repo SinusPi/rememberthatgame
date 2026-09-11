@@ -1,6 +1,6 @@
 <?php
 require("q.class.php");
-Q::$ONLY_TYPE="mp3";
+require("set.class.php");
 
 ini_set("DISPLAY_ERRORS", 1);
 header("Content-type: application/json");
@@ -11,62 +11,58 @@ header("Content-type: application/json");
 error_reporting(E_ALL^E_NOTICE);
 set_error_handler("json_error");
 
-session_name("ygsf");
-session_start();
-
-if ($_REQUEST['reset']??"") $_SESSION=[];
-
-$SEEN = explode(",",$_REQUEST['seen']??"");
-$GUESSED = explode(",",$_REQUEST['guessed']??"");
-
-$do_shuffle = ($_REQUEST['shuffle']??0)==1;
-
-$SETS = [
-	['slug'=>"all",'label'=>"all",'description'=>"all",'cond'=>function($q) { return true; }]  //default
-];
 require("config.inc.php");
+$QSETS = Set::get_sets_from_config($SETS);
 
-$SETS_SLUGS = array_reduce($SETS,function($ss,$set) { $ss[$set['slug']]=$set; return $ss; },[]);
-$SET = $SETS_SLUGS[$_REQUEST['set']??""]??null; // may be null, that's fine!
+if (isset($_REQUEST['listsets'])) {
+	$do_scores = ($_REQUEST['seen']??[]) || ($_REQUEST['guessed']??[]);
+	$all_questions = Q::load_questions();
+	foreach ($QSETS as $set) {
+		$setvals = get_object_vars($set);
 
-if ($_REQUEST['do']=="listsets") {
-	$questions = load_all_questions();
-	foreach ($SETS as &$set) {
-		$questions_in_set = array_filter($questions, function ($q) use ($set) {
-			return ($q
-				&& (
-					($set && $set['cond']($q))
-					//||
-					//(empty($_SESSION['prefs']) || count(array_intersect($q['pf'], $_SESSION['prefs'])) > 0)) // at least one pf_y is present in pf
-				)
-				//&& (!empty($pf_n) || count(array_intersect($q['pf'], $pf_n)) != count($q['pf'])) // not all of pf is in pf_n
-			);
-		});
-		$q_in_set=array_column($questions_in_set,'num');
-		$set['_count']=count($q_in_set);
-		if (isset($_REQUEST["seen"])) {
-			$seen = array_intersect($SEEN,$q_in_set);
-			$set['_seen']=count($seen);
-		}
-		if (isset($_REQUEST['guessed'])) {
-			$guessed = array_intersect($GUESSED,$q_in_set);
-			$set['_score']=count($guessed);
-		}
+	
+		$set->get_valid_questions_from($all_questions);
+		$setvals['count']=count($set->questions);
+		
+		$scores = $set->get_scores($_REQUEST['seen']??"",$_REQUEST['guessed']??"");
+		$scores = array_map("count",$scores);
+		$setvals = array_merge($setvals,$scores);
+
+		unset($setvals['condition'],$setvals['questions']);
+
+		$ret[] = $setvals;
 	}
-	die(json_encode($SETS));
+	die(json_encode($ret));
 }
 
-$unseen = [];
-if ($SET) {
-	if (!isset($_SESSION['set_questions'][$_REQUEST['set']])) {
-		// load matching questions
-		$all_questions = load_all_questions();
+if (isset($_REQUEST['set'])) {
+	$set = $QSETS[$_REQUEST['set']];
+	if (!$set) die(json_encode(['error'=>"no_such_set"]));
+	
+	$all_questions = Q::load_questions();
+	$set->get_valid_questions_from($all_questions);
 
-		if (!count($all_questions)) throw new Exception("No questions available");
+	$SEED = $_REQUEST['seed']??0;
+	if ($SEED==-1) $SEED=rand(1,9999);
+	if ($SEED>0) {
+		srand($SEED);
+		shuffle($set->questions);
+	}
 
-		$_SESSION['question_count'] = count($all_questions);
+	$retset = [];
+	$retset['questions']=array_keys($set->questions);
 
-		$settings = @json_decode(@file_get_contents("data/settings.json"),true);
+	$scores = $set->get_scores($_REQUEST['seen']??"",$_REQUEST['guessed']??"");
+	$retset = array_merge($retset,$scores);
+
+	die(json_encode($retset));
+}
+
+if (isset($_REQUEST['settings'])) {
+	die(@json_encode(@json_decode(@file_get_contents("data/settings.json"),true)));
+}
+
+		/*
 		if ($settings) {
 			foreach ((array)$settings['limits'] as &$limit) {
 				if ($limit['type']=="max-in-group") {
@@ -96,7 +92,6 @@ if ($SET) {
 		}
 
 		$_SESSION['set_questions'][$_REQUEST['set']] = array_column($all_questions,'num');
-	}
 
 	$QUESTIONS = $_SESSION['set_questions'][$_REQUEST['set']];
 
@@ -106,25 +101,18 @@ if ($SET) {
 	// throw away seen
 	$unseen = array_values(array_diff($QUESTIONS,$SEEN));
 	$seen_set = array_intersect($SEEN,$QUESTIONS);
+		*/
+
+if (isset($_REQUEST['q'])) {
+	try {
+		$q = Q::load_question_num(intval($_REQUEST['q']??0)); // =================================================
+		$qvals = get_object_vars($q);
+		die(json_encode($qvals));
+	} catch (Exception $err) {
+		die(json_encode(['err'=>$err->getMessage(),'errcase'=>"loading q",'errq'=>$qnum]));
+	}
 }
-
-// pick a specific question, seen or not ; or, pick from unseen
-$qnum = ($_REQUEST['q']??0) ?: $unseen[0] ?? 0;
-
-$Q = [];
-try {
-	if ($qnum) $Q = Q::load_question_num($qnum); // =================================================
-} catch (Exception $err) {
-	die(json_encode(['err'=>$err->getMessage(),'errcase'=>"loading q",'errq'=>$qnum]));
-}
-
-if (!$Q && !$SET) die(json_encode(['err'=>"no q, no set"]));
-if (!$Q) die(json_encode(['err'=>"no q in set ".$_REQUEST['set']." !?"]));
-
-
-//$Q['n']=$num;
-//$Q['f']=$f;
-
+/*
 $RET['total'] = $_SESSION['question_count'];
 if ($SET) {
 	$RET['match'] = count($QUESTIONS);
@@ -145,22 +133,7 @@ $RET['err'] = $err ? $err->getMessage() : null;
 $RET['q']=$Q ? $Q->getValues() : null;
 
 die(json_encode($RET));
-
-
-function load_all_questions() {
-	// read ALL QUESTIONS into $QS
-	$fs = Q::glob_all_datafiles("data/");
-	$questions = [];
-	foreach ($fs as $f) {
-		try {
-			$q_obj = Q::read_q($f);
-			if ($q_obj) $questions[]=$q_obj->getValues();
-		} catch (Exception $e) {
-			header("X-rtg-q-error: ".$f." ".$e->getMessage(),false);
-		}
-	}
-	return $questions;
-}
+*/
 
 function json_error($type,$text,$file,$line) {
 	if ($type & error_reporting()) die(json_encode(['err'=>$text,'errline'=>$line,'errtype'=>$type]));
