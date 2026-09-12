@@ -16,11 +16,11 @@ require("config.inc.php");
 
 // q : Fetch a question by number, in brief form for the quiz. If &full=1 is set, return full question data.
 if (isset($_REQUEST['q'])) {
-	Quiz::fetch_q(intval($_REQUEST['q']), !!($_REQUEST['full']??0));
+	die(json_encode(Quiz::fetch_q(intval($_REQUEST['q']), !!($_REQUEST['full']??0))));
 }
 if (isset($_REQUEST['check'])) {
 	if (!isset($_REQUEST['q'])) die(json_encode(['err'=>"Missing q"]));
-	Quiz::check_answer(intval($_REQUEST['q']), $_REQUEST['answer']??"", intval($_REQUEST['multiple']??0));
+	die(json_encode(Quiz::check_answer(intval($_REQUEST['q']), $_REQUEST['answer']??"", intval($_REQUEST['multiple']??0))));
 }
 
 $QSETS = Set::get_sets_from_config($SETS);

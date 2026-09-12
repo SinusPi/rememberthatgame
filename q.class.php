@@ -122,9 +122,12 @@ class Q {
 			} else {
 				// legacy
 				$re = $m;
-				unset($answer);
-				$this->scores[1]['tag']="name";
-				$this->scores[1]['re']=$re;
+				$this->scores[1] = [
+					'name' => 'name',
+					're' => $re,
+					'answer' => '',
+					'score' => 0,
+				];
 			}
 		}
 		if (!$this->pf) $this->pf=["PC"];
@@ -162,8 +165,9 @@ class Q {
 
 	function set_from_array(array $arr) {
 		foreach ($arr as $k=>$v) {
-			if (!property_exists($this,$k)) throw new Exception("Unknown property $k");
 			if ($k=="cmp") $k="composer"; // legacy
+			if ($k=="fullname") $k="title"; // legacy
+			if (!property_exists($this,$k)) throw new Exception("Unknown property $k");
 			if ($k=="scores") {
 				$this->scores=[];
 				foreach ((array)$v as $score) {
@@ -249,6 +253,7 @@ class Q {
 	function check_text_answer(string $guess):array {
 		return array_map(fn($score)=>$score->get_json(false), array_filter($this->scores, fn($score)=>$score->is_correct($guess)));
 	}
+	
 	/**
 	 * Check a multiple choice answer for this question.
 	 * @param int $choicenum The 1-based index of the multiple choice question to check.
@@ -257,9 +262,8 @@ class Q {
 	 * @throws Exception If the multiple choice question number is invalid.
 	 */
 	function check_multiple_choice(int $choicenum, string $guess):array {
-		$choicenum--; // convert to 0-based index
-		if (!isset($this->multiple[$choicenum])) throw new Exception("No multiple choice question #$choicenum for question ".$this->num);
-		$mult = $this->multiple[$choicenum];
+		if (!isset($this->multiple[$choicenum-1])) throw new Exception("No multiple choice question #$choicenum for question ".$this->num);
+		$mult = $this->multiple[$choicenum-1];
 		if ($mult->is_correct($guess)) return $mult->get_json(false);
 		else return [];
 	}

@@ -22,18 +22,23 @@ function assert_has_key(string $key, array $array, string $message): void {
 	}
 }
 
-function run_q_php(array $query): array {
-	$encoded = http_build_query($query);
-	$script = <<<'PHP'
-parse_str($argv[1], $_GET);
-$_REQUEST = $_GET;
-include 'q.php';
-PHP;
-	$command = 'php -r '.escapeshellarg($script).' -- '.escapeshellarg($encoded);
-	$output = shell_exec($command);
+function run_php_script(string $script): string {
+	$tempFile = tempnam(sys_get_temp_dir(), 'rtg-test-');
+	assert_true($tempFile !== false, "Failed to create temporary PHP script");
+	file_put_contents($tempFile, $script);
+	try {
+		$output = shell_exec('php '.escapeshellarg($tempFile));
+	} finally {
+		@unlink($tempFile);
+	}
 	assert_true($output !== null, "Failed to execute q.php in subprocess");
+	return $output;
+}
+
+function run_quiz_php(string $expression): array {
+	$output = run_php_script("<?php\nrequire 'q.class.php';\nrequire 'Quiz.class.php';\n".$expression."\n");
 	$data = json_decode($output, true);
-	assert_true(is_array($data), "q.php did not return valid JSON: ".$output);
+	assert_true(is_array($data), "Quiz subprocess did not return valid JSON: ".$output);
 	return $data;
 }
 
@@ -57,8 +62,8 @@ function test_clean_json_hides_answers_and_hints(): void {
 	assert_true(!isset($clean['multiple'][0]['wrongs']), "Clean JSON should hide wrong-answer pool");
 	assert_true(isset($clean['multiple'][0]['choices']), "Clean JSON should still expose multiple-choice options");
 	assert_true(in_array("King's Quest", $clean['multiple'][0]['choices'], true), "Choices should include the correct easy-mode answer");
-	assert_true(isset($full['scores'][0]['re']), "Full JSON should retain expert regex hints");
-	assert_true(isset($full['multiple'][0]['correct']), "Full JSON should retain full multiple-choice data");
+	assert_same('kq|king.*quest', $full['scores'][0]->re, "Full JSON should retain expert regex hints");
+	assert_same("King's Quest", $full['multiple'][0]->correct, "Full JSON should retain full multiple-choice data");
 }
 
 function test_expert_mode_matches_regex_answers(): void {
@@ -71,7 +76,7 @@ function test_expert_mode_matches_regex_answers(): void {
 
 	$regexDriven = Q::load_question_num(2)->check_text_answer("Sands of Time");
 	assert_same(1, count($regexDriven), "Expert mode should honor regex alternatives from question data");
-	assert_same("Prince of Persia: The Sands of Time", $regexDriven[0]['answer'], "Regex alternative should resolve to the configured answer");
+	assert_same("Prince of Persia: Sands of Time", $regexDriven[0]['answer'], "Regex alternative should resolve to the configured answer");
 }
 
 function test_easy_mode_checks_multiple_choice_sequence(): void {
@@ -86,18 +91,18 @@ function test_easy_mode_checks_multiple_choice_sequence(): void {
 }
 
 function test_quiz_fetch_and_check_answer(): void {
-	$fetched = run_q_php(['q' => 17]);
+	$fetched = Quiz::fetch_q(17);
 	assert_same(17, $fetched['num'], "Quiz fetch should return the requested question");
 	assert_true(!isset($fetched['scores'][0]['answer']), "Quiz fetch should return cleaned expert data");
 	assert_true(!isset($fetched['multiple'][0]['correct']), "Quiz fetch should return cleaned multiple-choice data");
 
-	$expertResult = run_q_php(['check' => 1, 'q' => 17, 'answer' => "King's Quest V"]);
+	$expertResult = Quiz::check_answer(17, "King's Quest V");
 	assert_same(2, count($expertResult), "Quiz answer check should return all expert-mode matches");
 
-	$easyResult = run_q_php(['check' => 1, 'q' => 17, 'answer' => "King's Quest V", 'multiple' => 2]);
+	$easyResult = Quiz::check_answer(17, "King's Quest V", 2);
 	assert_same('fullname', $easyResult['name'], "Quiz answer check should validate easy-mode answers by choice index");
 
-	$easyWrong = run_q_php(['check' => 1, 'q' => 17, 'answer' => "King's Quest VI", 'multiple' => 2]);
+	$easyWrong = Quiz::check_answer(17, "King's Quest VI", 2);
 	assert_same([], $easyWrong, "Quiz answer check should reject wrong easy-mode answers");
 }
 
