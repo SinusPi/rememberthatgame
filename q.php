@@ -1,6 +1,7 @@
 <?php
 require("q.class.php");
 require("set.class.php");
+require("Quiz.class.php");
 
 ini_set("DISPLAY_ERRORS", 1);
 header("Content-type: application/json");
@@ -12,6 +13,16 @@ error_reporting(E_ALL^E_NOTICE);
 set_error_handler("json_error");
 
 require("config.inc.php");
+
+// q : Fetch a question by number, in brief form for the quiz. If &full=1 is set, return full question data.
+if (isset($_REQUEST['q'])) {
+	Quiz::fetch_q(intval($_REQUEST['q']), !!($_REQUEST['full']??0));
+}
+if (isset($_REQUEST['check'])) {
+	if (!isset($_REQUEST['q'])) die(json_encode(['err'=>"Missing q"]));
+	Quiz::check_answer(intval($_REQUEST['q']), $_REQUEST['answer']??"", intval($_REQUEST['multiple']??0));
+}
+
 $QSETS = Set::get_sets_from_config($SETS);
 
 if (isset($_REQUEST['listsets'])) {
